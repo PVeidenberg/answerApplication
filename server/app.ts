@@ -1,4 +1,4 @@
-import { checkIfOnlyUserInTheRoom, getAdmin } from "./users";
+import { checkIfRoomExists, getAdmin } from "./users";
 
 const app = require('express')();
 const http = require('http').createServer(app);
@@ -16,8 +16,11 @@ const generateRoomCode = () => {
 }
 
 app.use(cors())
-
 io.on('connection', (socket) => {
+  socket.on("connect",function(roomCode , fn) {
+    socket.join(roomCode);
+  })
+
   socket.on("createRoom",function(_ , fn) {
     const roomCode = generateRoomCode();
     addUser(socket.id, null, roomCode, true);
@@ -26,28 +29,20 @@ io.on('connection', (socket) => {
   })
 
   socket.on("joinRoom", ({userName, roomCode}, callback) => {
-    console.log("joinRoom", roomCode);
-    const user = addUser(socket.id, userName, roomCode, false);
-    if (user === {}) {
-      io.to(socket.id).emit('notValidUserName');
-    }
-
-    if (checkIfOnlyUserInTheRoom(roomCode)) {
-      console.log("checkIfOnlyUserInTheRoom");
-      const user = getUser(socket.id);
-      io.to(user.userID).emit('notValidRoomCode');
-      deleteUser(socket.id);
-      console.log("getUsers", getUsers());
-      socket.leave(socket.id);
-      console.log("leaveRoom", roomCode, userName);
-    } else {
-      console.log("joinRoom", roomCode, userName);
-      const user = getUser(socket.id);
-      io.to(user.userID).emit('validRoomCode', {userName, roomCode});
-      socket.join(roomCode);
+    if (checkIfRoomExists(roomCode)) {
+      console.log("roomExists");
+      addUser(socket.id, null, roomCode, true);
+      console.log("joining room - ", roomCode, "username - ", userName);
       console.log("getAdmin", getAdmin(roomCode));
       console.log("getUsers", getUsers());
+      socket.join(roomCode);
+      io.to(socket.id).emit('validRoomCode', {userName, roomCode});
       io.to(getAdmin(roomCode)).emit('renderUser', {userName, answer:""});
+    } else {
+      io.to(socket.id).emit('notValidRoomCode');
+      socket.leave(socket.id);
+      console.log("getUsers", getUsers());
+      console.log("leaveRoom", roomCode, userName);
     }
   })
 

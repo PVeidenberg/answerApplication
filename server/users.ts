@@ -26,18 +26,15 @@ export const addUser = (userID, userName, roomCode, isAdmin) => {
     return user;
 };
 
-export const checkIfOnlyUserInTheRoom = (roomCode) => {
-    let roomCodeCount = 0;
+export const checkIfRoomExists = (roomCode) => {
+    let result = false;
     usersArray.forEach(element => {
         const objectRoomCodes = Object.keys(element);
-        objectRoomCodes.forEach(code => {
-            if (code == roomCode) {
-                roomCodeCount++;
-            } 
-        return roomCodeCount == 1;
-        })
-    })
-    return roomCodeCount == 1;
+        if (objectRoomCodes.includes(roomCode)) {
+            result = true;
+        }
+    });
+    return result;
 };
 
 export const getUser = (userID) => {
