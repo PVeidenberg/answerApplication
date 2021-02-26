@@ -7,7 +7,6 @@ const io = require('socket.io')(http, {cors: {
   origin: '*',
   } 
 });
-const cors = require('cors');
 const {addUser, getUser, deleteUser, getUsers, addAdmin} = require('./users');
 
 const generateRoomCode = () => {
@@ -15,28 +14,40 @@ const generateRoomCode = () => {
     return roomCode;
 }
 
-app.use(cors())
 io.on('connection', (socket) => {
-  socket.on("connect",function(roomCode , fn) {
-    socket.join(roomCode);
+  /*socket.on("reconnect", ({ roomCode, viewerType }, callback) => {
+    if (viewerType === "admin") {
+      console.log("admin reconnected - ", roomCode);
+      addUser(socket.id, null, roomCode, true);
+      socket.join(roomCode);
+    }
+    if (viewerType === "question") {
+      console.log("viewer reconnected - ", roomCode);
+      callback();
+    }
+  })*/
+
+  socket.on("askRoomCode", function(_ , fn) {
+    console.log("askRoomCode");
+    const roomCode = "1111" // generateRoomCode();
+    fn(roomCode);  
   })
 
-  socket.on("createRoom",function(_ , fn) {
-    const roomCode = generateRoomCode();
+  socket.on("createRoom", ({roomCode}) => {
+    console.log("createRoom");
     addUser(socket.id, null, roomCode, true);
     socket.join(roomCode);
-    fn(roomCode);  
   })
 
   socket.on("joinRoom", ({userName, roomCode}, callback) => {
     if (checkIfRoomExists(roomCode)) {
       console.log("roomExists");
-      addUser(socket.id, null, roomCode, true);
+      addUser(socket.id, userName, roomCode, false);
       console.log("joining room - ", roomCode, "username - ", userName);
       console.log("getAdmin", getAdmin(roomCode));
       console.log("getUsers", getUsers());
       socket.join(roomCode);
-      io.to(socket.id).emit('validRoomCode', {userName, roomCode});
+     // io.to(socket.id).emit('validRoomCode', {userName, roomCode});
       io.to(getAdmin(roomCode)).emit('renderUser', {userName, answer:""});
     } else {
       io.to(socket.id).emit('notValidRoomCode');
@@ -50,8 +61,12 @@ io.on('connection', (socket) => {
     io.to(getAdmin(roomCode)).emit('renderUser', {userName, answer});
   })
 
-  socket.on("nextQuestionServer", ({roomCode, answerTime, questionNumber}) => {
-    socket.broadcast.to(roomCode).emit('nextQuestion', {answerTime, questionNumber});
+  socket.on("nextQuestionServer", ({roomCode, answerTime}) => {
+    socket.broadcast.to(roomCode).emit('nextQuestion', {answerTime});
+  })
+
+  socket.on("endQuestionServer", ({roomCode}) => {
+    socket.broadcast.to(roomCode).emit('endQuestion');
   })
 
   socket.on("disconnect", () => {

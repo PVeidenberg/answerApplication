@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { socket } from "../../services/socket";
-
 import { withStyles, styled } from "@material-ui/core/styles";
-import axios from "axios";
 import "./landing-view.css";
 import Paths from "../../Paths";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const CustomTextField = withStyles({
   root: {
@@ -40,15 +38,15 @@ const MyButton = styled(Button)({
   width: "225px",
 });
 
-export default function App() {
+export default function App(props: any) {
   const history = useHistory();
   const [isClicked, setIsClicked] = useState(false);
   const [hasUserNameError, setHasUserNameError] = useState(false);
   const [hasroomCodeError, setHasRoomCodeError] = useState(false);
   const [userName, setUserName] = useState("");
-  const [roomCode, setRoomCode] = useState("");
+  const [roomCode, setRoomCode] = useState("1111");
 
-  useEffect(() => {
+  /* useEffect(() => {
     socket.on("notValidRoomCode", () => {
       setHasRoomCodeError(true);
     });
@@ -59,33 +57,30 @@ export default function App() {
       console.log("notValidUserName");
       setHasUserNameError(true);
     });
-  }, [hasUserNameError]); //only re-run the effect if new message comes in
+  }, [hasUserNameError]); //only re-run the effect if new message comes in*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     socket.on("validRoomCode", (data: any) => {
       setHasRoomCodeError(false);
       history.push({
-        pathname: Paths.question + `/${roomCode}`,
-        state: { userName: data.userName, roomCode: data.roomCode },
+        pathname: Paths.question + `/${data.roomCode}`,
+        state: {
+          userName: data.userName,
+        },
       });
     });
-  }, []); //only re-run the effect if new message comes in
+  }, []); //only re-run the effect if new message comes in*/
 
   const handleJoinRoom = () => {
     console.log("handleJoinRoom");
     if (isClicked) {
-      if (userName.trim().length === 0 && isClicked) {
-        setHasUserNameError(true);
-        return;
-      }
-      if (roomCode.trim().length === 0 && isClicked) {
-        setHasRoomCodeError(true);
-        return;
-      }
-      setHasRoomCodeError(false);
-      setHasUserNameError(false);
-
-      socket.emit("joinRoom", { userName, roomCode });
+      history.push({
+        pathname: Paths.question,
+        state: {
+          userName,
+          roomCode,
+        },
+      });
     } else {
       document.getElementById("Slider")?.classList.toggle("slidedown");
       setIsClicked(true);
@@ -93,10 +88,13 @@ export default function App() {
   };
 
   const handleCreateRoom = async () => {
-    socket.emit("createRoom", null, function (roomCode: any) {
+    socket.emit("askRoomCode", null, (roomCode: string) => {
+      setRoomCode(roomCode);
       history.push({
-        pathname: Paths.admin + `/${roomCode}`,
-        state: { roomCode },
+        pathname: Paths.admin,
+        state: {
+          roomCode,
+        },
       });
     });
   };

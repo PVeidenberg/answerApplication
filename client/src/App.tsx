@@ -8,25 +8,24 @@ import AdminView from "./views/AdminView/adminView";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 
 export const App: React.FC = () => {
-
   const isAdmin = true;
-  
+
   return (
     <>
       <Router>
         <Switch>
-        <Route exact path="/">
+          <Route exact path="/">
             <Redirect to={Paths.landing} />
-        </Route>
-        <Route exact path={Paths.landing} component={LandingView} />
-        <Route exact path={Paths.question} component={QuestionView} />
-        <ProtectedRoute
+          </Route>
+          <Route path={Paths.landing} component={LandingView} />
+          <Route path={Paths.question} component={QuestionView} />
+          <ProtectedRoute
             allowed={isAdmin}
             path={Paths.admin}
             redirectNotAllowed={Paths.landing}
             component={AdminView}
           />
-        
+
           {/* <Route>
             <NotFoundView />
           </Route> */}

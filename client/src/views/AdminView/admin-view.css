@@ -1,27 +1,36 @@
 .next-question {
-    margin-top: 50px;
-    margin-bottom: 100px;
+  margin-top: 50px;
+  margin-bottom: 100px;
 }
 
 .admin-layout {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    background-color: #282c34;
-    flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: #282c34;
+  flex-direction: column;
+}
+
+.footer {
+  display: flex;
+  width: 225px;
+  height: 200px;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
 .time-left {
-    display: flex;
-    width: 225px;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: row;
-    margin-bottom: 50px;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: row;
+  margin-bottom: 50px;
 }
 
 .white {
-    color: white;
+  color: white;
 }

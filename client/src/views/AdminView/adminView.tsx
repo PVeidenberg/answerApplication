@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import Drawer from "../../components/Drawer/drawer";
@@ -25,51 +24,53 @@ const MyButton = styled(Button)({
 });
 
 export default function QuestionView(props: any) {
-  const url = window.location.href;
-  const [answerTime, setAnswerTime] = useState(0);
-  const [questionNumber, setQuestionNumber] = useState(0);
-  const [roomCode, setRoomCode] = useState(props.location.state.roomCode);
+  const [answerTime, setAnswerTime] = useState(15);
+  const [roomCode, _] = useState(props.location.state.roomCode);
   const [users, setUsers] = useState<Array<any>>([]);
-  console.log(url);
-  // const [user, setUser] = useState({});
 
-  /* useEffect(() => {
-    socket.emit("connect", {
-      roomCode: ,
-
+  useEffect(() => {
+    socket.emit("createRoom", {
+      roomCode,
     });
-  }, []); //only re-run the effect if new message comes in*/
+  }, []);
 
   useEffect(() => {
     socket.on("renderUser", (data: any) => {
-      const user = {
-        userName: data.userName,
-        answer: data.answer,
-      };
-
-      setUsers((users) => users.concat(user));
+      setUsers((users) => [
+        ...users,
+        {
+          userName: data.userName,
+          answer: data.answer,
+        },
+      ]);
     });
+  }, []);
 
+  useEffect(() => {
     socket.on("deleteUser", (data: any) => {
-      setUsers(users.filter((user) => user.userName !== data.userName));
+      setUsers((users) =>
+        users.filter((user) => user.userName !== data.userName)
+      );
     });
-  }, []); //only re-run the effect if new message comes in
+  }, []);
 
   const handleNextQuestion = () => {
-    console.log(url);
     socket.emit("nextQuestionServer", {
       roomCode,
       answerTime,
-      questionNumber: questionNumber + 1,
     });
     setUsers([]);
-    setQuestionNumber(questionNumber + 1);
+  };
+
+  const handleEndQuestion = () => {
+    socket.emit("endQuestionServer", {
+      roomCode,
+    });
   };
 
   const handleAnswerTimeChange = (event: any) => {
     const time = event.target.value;
     setAnswerTime(time);
-    console.log(time);
   };
 
   return (
@@ -90,19 +91,29 @@ export default function QuestionView(props: any) {
           value={answerTime}
           onChange={(e) => handleAnswerTimeChange(e)}
         >
-          <option value={0}>0</option>
           <option value={15}>15</option>
-          <option value={20}>20</option>
-          <option value={25}>25</option>
           <option value={30}>30</option>
-          <option value={35}>35</option>
-          <option value={40}>40</option>
           <option value={45}>45</option>
-          <option value={50}>50</option>
-          <option value={55}>55</option>
-          <option value={60}>60</option>
+          <option value={60}>1:00</option>
+          <option value={75}>1:15</option>
+          <option value={90}>1:30</option>
+          <option value={105}>1:45</option>
+          <option value={120}>2:00</option>
+          <option value={135}>2:15</option>
+          <option value={150}>2:30</option>
+          <option value={300}>No time</option>
         </CustomNativeSelect>
       </div>
+
+      <MyButton
+        className=""
+        onClick={() => handleEndQuestion()}
+        variant="contained"
+        color="primary"
+      >
+        End question
+      </MyButton>
+
       <MyButton
         className="next-question"
         onClick={() => handleNextQuestion()}
@@ -111,6 +122,7 @@ export default function QuestionView(props: any) {
       >
         Next question
       </MyButton>
+
       <Drawer />
     </div>
   );
