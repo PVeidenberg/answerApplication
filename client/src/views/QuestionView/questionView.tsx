@@ -67,21 +67,21 @@ export default function QuestionView(props: any) {
     });
   }, []);
 
-  useEffect(() => {
-    socket.on("endQuestion", () => {
-      handleAnswerSending();
-      console.log("endQuestion");
-      /*  setQuestionTimeLeft("plenty");
-      if (hasNotAnswered) {
-        socket.emit("sendAnswer", {
-          userName,
-          answer: "Was toooo slow to answer",
-          roomCode,
-        });
-        setAnswer("");
-      }*/
-    });
-  }, []);
+  // useEffect(() => {
+  //   socket.on("endQuestion", () => {
+  //     handleAnswerSending();
+  //     console.log("endQuestion");
+  //     /*  setQuestionTimeLeft("plenty");
+  //     if (hasNotAnswered) {
+  //       socket.emit("sendAnswer", {
+  //         userName,
+  //         answer: "Was toooo slow to answer",
+  //         roomCode,
+  //       });
+  //       setAnswer("");
+  //     }*/
+  //   });
+  // }, []);
 
   useEffect(() => {
     if (startTimer) {
@@ -97,7 +97,7 @@ export default function QuestionView(props: any) {
         return () => clearTimeout(timer);
       }
     }
-  }, [questionTimeLeft]);
+  }, [startTimer, questionTimeLeft]);
 
   const handleAnswerChange = (event: any) => {
     setAnswer(() => event.target.value);
@@ -105,14 +105,14 @@ export default function QuestionView(props: any) {
 
   const handleAnswerSending = () => {
     console.log(hasNotAnswered);
-    if (hasNotAnswered) {
+   // if (hasNotAnswered) {
       setHasNotAnswered(false);
       setIsSendButtonDisabled(true);
       setQuestionTimeLeft("plenty");
       console.log(answer);
       socket.emit("sendAnswer", { userName, answer, roomCode });
       setAnswer("");
-    }
+  //  }
   };
 
   return (
