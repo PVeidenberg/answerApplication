@@ -31,6 +31,45 @@ export default function QuestionView(props: any) {
   const [users, setUsers] = useState<any>([]);
   const [questionTimeLeft, setQuestionTimeLeft] = useState(15);
   const [startTimer, setStartTimer] = useState(false);
+  const ary = [
+    {userName:"Pärt",
+    answer: "Tallinn"
+    },
+    {userName:"Evelina",
+    answer: "Tallinn"
+    },
+    {userName:"Pät",
+    answer: "Tallinn"
+    },
+    {userName:"Prt",
+    answer: "Tallinn"
+    },
+    {userName:"rt",
+    answer: "Tallinn"
+    },
+
+    {userName:"Evela",
+    answer: "Tallinn"
+    },
+    {userName:"Eelina",
+    answer: "Tallinn"
+    },
+    {userName:"Eveina",
+    answer: "Tallinn"
+    },
+    {userName:"Elina",
+    answer: "Tallinn"
+    },
+    {userName:"Svenm",
+    answer: "Tallinn"
+    },
+    {userName:"Sven",
+    answer: "Tallinn"
+    },
+    {userName:"Anne",
+    answer: "Tallinn"
+    },
+  ]
 
   useEffect(() => {
     socket.emit("createRoom", {
@@ -111,6 +150,14 @@ export default function QuestionView(props: any) {
         })}
       </main>
       <footer>
+      <MyButton
+        className="next-question"
+        onClick={() => handleNextQuestion()}
+        variant="contained"
+        color="primary"
+      >
+        Next question
+      </MyButton>
       <div className="time-left">
         <h3 className="white">{"Answer time: "}</h3>
         <CustomNativeSelect
@@ -131,18 +178,10 @@ export default function QuestionView(props: any) {
         </CustomNativeSelect>
       </div>
       <h3 className="white">{`Time left to answer: ${questionTimeLeft}`}</h3>
-      <MyButton
-        className="next-question"
-        onClick={() => handleNextQuestion()}
-        variant="contained"
-        color="primary"
-      >
-        Next question
-      </MyButton>
         
       </footer>
 
-      <Drawer />
+      {/* <Drawer /> */}
     </div>
   );
 }
