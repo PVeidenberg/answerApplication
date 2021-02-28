@@ -1,10 +1,10 @@
-let usersArray = [];
+let usersArray:any = [];
 
-export const addUser = (userID, userName, roomCode, isAdmin) => {
+export const addUser = (userID:any, userName:any, roomCode:any, isAdmin:any) => {
     const key = roomCode;
     let userNameExists = false;
-    const user = {};
-    usersArray.forEach(element => {
+    const user:any = {};
+    usersArray.forEach((element:any) => {
         const objectRoomCodes = Object.keys(element);
         objectRoomCodes.forEach(code => {
             if (code == roomCode && element[code].userName == userName) {
@@ -26,9 +26,9 @@ export const addUser = (userID, userName, roomCode, isAdmin) => {
     return user;
 };
 
-export const checkIfRoomExists = (roomCode) => {
+export const checkIfRoomExists = (roomCode:any) => {
     let result = false;
-    usersArray.forEach(element => {
+    usersArray.forEach((element:any) => {
         const objectRoomCodes = Object.keys(element);
         if (objectRoomCodes.includes(roomCode)) {
             result = true;
@@ -37,9 +37,9 @@ export const checkIfRoomExists = (roomCode) => {
     return result;
 };
 
-export const getUser = (userID) => {
+export const getUser = (userID:any) => {
     let user = {};
-    usersArray.forEach(element => {
+    usersArray.forEach((element:any) => {
         const objectRoomCodes = Object.keys(element);
         objectRoomCodes.forEach(roomCode => {
             if (element[roomCode].userID == userID) {
@@ -57,13 +57,12 @@ export const getUser = (userID) => {
     return user;
 };
 
-export const deleteUser = (userID) => {
-    usersArray.forEach(element => {
+export const deleteUser = (userID:any) => {
+    usersArray.forEach((element:any) => {
         const objectRoomCodes = Object.keys(element);
         objectRoomCodes.forEach(roomCode => {
             if (element[roomCode].userID == userID) {
                 let index = usersArray.indexOf(element);
-                console.log("deleted user", element[roomCode].userName );
                 usersArray.splice(index , 1);
             }
         })
@@ -74,9 +73,9 @@ export const getUsers = () => {
     return usersArray;
 };
 
-export const getAdmin = (roomCode) => {
+export const getAdmin = (roomCode:any) => {
     let admin = "";
-    usersArray.forEach(element => {
+    usersArray.forEach((element:any) => {
         const objectRoomCode = Object.keys(element);
         if (objectRoomCode == roomCode) {
             const innerObject = element[roomCode];

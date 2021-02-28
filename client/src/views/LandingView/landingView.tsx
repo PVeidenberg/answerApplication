@@ -44,43 +44,31 @@ export default function App(props: any) {
   const [hasUserNameError, setHasUserNameError] = useState(false);
   const [hasroomCodeError, setHasRoomCodeError] = useState(false);
   const [userName, setUserName] = useState("");
-  const [roomCode, setRoomCode] = useState("1111");
+  const [roomCode, setRoomCode] = useState("");
 
-  /* useEffect(() => {
-    socket.on("notValidRoomCode", () => {
-      setHasRoomCodeError(true);
-    });
-  }, []); //only re-run the effect if new message comes in
-
-  useEffect(() => {
-    socket.on("notValidUserName", () => {
-      console.log("notValidUserName");
-      setHasUserNameError(true);
-    });
-  }, [hasUserNameError]); //only re-run the effect if new message comes in*/
-
-  /*useEffect(() => {
-    socket.on("validRoomCode", (data: any) => {
-      setHasRoomCodeError(false);
-      history.push({
-        pathname: Paths.question + `/${data.roomCode}`,
-        state: {
-          userName: data.userName,
-        },
-      });
-    });
-  }, []); //only re-run the effect if new message comes in*/
 
   const handleJoinRoom = () => {
-    console.log("handleJoinRoom");
     if (isClicked) {
-      history.push({
-        pathname: Paths.question,
-        state: {
-          userName,
-          roomCode,
-        },
-      });
+      if (userName.trim().length < 3) {
+        setHasUserNameError(() => true);
+        setHasRoomCodeError(false);
+      } else {
+        setHasUserNameError(() => false);
+        socket.emit("validateRoomCode", {roomCode}, (isValid: boolean) => {
+          if (isValid) {
+            setHasRoomCodeError(false);
+            history.push({
+              pathname: Paths.question,
+              state: {
+                userName,
+                roomCode,
+              },
+            });
+          } else {
+            setHasRoomCodeError(true);
+          }
+        });
+      }
     } else {
       document.getElementById("Slider")?.classList.toggle("slidedown");
       setIsClicked(true);
@@ -120,9 +108,9 @@ export default function App(props: any) {
         <CustomTextField
           id="userNameField"
           error={hasUserNameError}
-          label={hasUserNameError ? "Error" : "Username"}
+          label={hasUserNameError ? "Error" : "Nickname"}
           helperText={
-            hasUserNameError ? "Incorrect entry or username already exists" : ""
+            hasUserNameError ? "Nickname must be at least 4 characters" : ""
           }
           onChange={handleUsernameChange}
           value={userName}

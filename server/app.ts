@@ -1,13 +1,18 @@
 import { checkIfRoomExists, getAdmin } from "./users";
 
-const app = require('express')();
-const http = require('http').createServer(app);
+import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
+
+
+const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
-const io = require('socket.io')(http, {cors: {
+const io = new Server(server, {cors: {
   origin: '*',
   } 
 });
-const {addUser, getUser, deleteUser, getUsers, addAdmin} = require('./users');
+const {addUser, getUser, deleteUser, getUsers } = require('./users');
 
 const generateRoomCode = () => {
     var roomCode = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
@@ -15,57 +20,39 @@ const generateRoomCode = () => {
 }
 
 io.on('connection', (socket) => {
-  /*socket.on("reconnect", ({ roomCode, viewerType }, callback) => {
-    if (viewerType === "admin") {
-      console.log("admin reconnected - ", roomCode);
-      addUser(socket.id, null, roomCode, true);
-      socket.join(roomCode);
-    }
-    if (viewerType === "question") {
-      console.log("viewer reconnected - ", roomCode);
-      callback();
-    }
-  })*/
-
-  socket.on("askRoomCode", function(_ , fn) {
-    console.log("askRoomCode");
-    const roomCode = "1111" // generateRoomCode();
+  socket.on("askRoomCode", function(_:any , fn:any) {
+    const roomCode = generateRoomCode();
     fn(roomCode);  
   })
 
-  socket.on("createRoom", ({roomCode}) => {
-    console.log("createRoom");
+  socket.on("createRoom", ({roomCode}:any) => {
     addUser(socket.id, null, roomCode, true);
     socket.join(roomCode);
   })
 
-  socket.on("joinRoom", ({userName, roomCode}, callback) => {
+  socket.on("validateRoomCode", ({roomCode}:any, callback:any) => {
     if (checkIfRoomExists(roomCode)) {
-      console.log("roomExists");
-      addUser(socket.id, userName, roomCode, false);
-      console.log("joining room - ", roomCode, "username - ", userName);
-      console.log("getAdmin", getAdmin(roomCode));
-      console.log("getUsers", getUsers());
-      socket.join(roomCode);
-     // io.to(socket.id).emit('validRoomCode', {userName, roomCode});
-      io.to(getAdmin(roomCode)).emit('renderUser', {userName, answer:""});
+      callback(true);
     } else {
-      io.to(socket.id).emit('notValidRoomCode');
-      socket.leave(socket.id);
-      console.log("getUsers", getUsers());
-      console.log("leaveRoom", roomCode, userName);
+      callback(false);
     }
   })
 
-  socket.on("sendAnswer", ({userName, answer, roomCode }) => {
+  socket.on("joinRoom", ({userName, roomCode}:any) => {
+      addUser(socket.id, userName, roomCode, false);
+      socket.join(roomCode);
+      io.to(getAdmin(roomCode)).emit('renderUser', {userName, answer:""});
+  })
+
+  socket.on("sendAnswer", ({userName, answer, roomCode }:any) => {
     io.to(getAdmin(roomCode)).emit('renderUser', {userName, answer});
   })
 
-  socket.on("nextQuestionServer", ({roomCode, answerTime}) => {
+  socket.on("nextQuestionServer", ({roomCode, answerTime}:any) => {
     socket.broadcast.to(roomCode).emit('nextQuestion', {answerTime});
   })
 
-  socket.on("endQuestionServer", ({roomCode}) => {
+  socket.on("endQuestionServer", ({roomCode}:any) => {
     socket.broadcast.to(roomCode).emit('endQuestion');
   })
 
@@ -73,10 +60,9 @@ io.on('connection', (socket) => {
     const user = getUser(socket.id);
     deleteUser(socket.id);
     io.to(getAdmin(user.roomCode)).emit('deleteUser', {userName: user.userName});
-    console.log("disconnect");
   })
 })
 
-http.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Listening to ${PORT}`);
 })

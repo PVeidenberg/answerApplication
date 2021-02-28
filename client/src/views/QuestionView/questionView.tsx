@@ -41,7 +41,6 @@ export default function QuestionView(props: any) {
     "plenty"
   );
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(true);
-  const [hasNotAnswered, setHasNotAnswered] = useState(true);
   const [userName, setUserName] = useState(props.location.state.userName);
   const [roomCode, setroomCode] = useState(props.location.state.roomCode);
   const [startTimer, setStartTimer] = useState(false);
@@ -55,7 +54,6 @@ export default function QuestionView(props: any) {
 
   useEffect(() => {
     socket.on("nextQuestion", (data: any) => {
-      console.log("nextQuestion");
       setIsSendButtonDisabled(false);
       if (parseInt(data.answerTime) === 300) {
         setQuestionTimeLeft("plenty");
@@ -66,22 +64,6 @@ export default function QuestionView(props: any) {
       }
     });
   }, []);
-
-  // useEffect(() => {
-  //   socket.on("endQuestion", () => {
-  //     handleAnswerSending();
-  //     console.log("endQuestion");
-  //     /*  setQuestionTimeLeft("plenty");
-  //     if (hasNotAnswered) {
-  //       socket.emit("sendAnswer", {
-  //         userName,
-  //         answer: "Was toooo slow to answer",
-  //         roomCode,
-  //       });
-  //       setAnswer("");
-  //     }*/
-  //   });
-  // }, []);
 
   useEffect(() => {
     if (startTimer) {
@@ -103,16 +85,9 @@ export default function QuestionView(props: any) {
     setAnswer(() => event.target.value);
   };
 
-  const handleAnswerSending = () => {
-    console.log(hasNotAnswered);
-   // if (hasNotAnswered) {
-      setHasNotAnswered(false);
-      setIsSendButtonDisabled(true);
-      setQuestionTimeLeft("plenty");
-      console.log(answer);
+  const handleAnswerSending = () => {;
       socket.emit("sendAnswer", { userName, answer, roomCode });
       setAnswer("");
-  //  }
   };
 
   return (

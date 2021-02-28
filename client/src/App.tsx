@@ -4,8 +4,9 @@ import Paths from "./Paths";
 import { BrowserRouter as Router } from "react-router-dom";
 import LandingView from "./views/LandingView/landingView";
 import QuestionView from "./views/QuestionView/questionView";
+import NotFoundView from "./views/NotFoundView/notFoundView";
 import AdminView from "./views/AdminView/adminView";
-import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
+
 
 export const App: React.FC = () => {
   const isAdmin = true;
@@ -19,16 +20,11 @@ export const App: React.FC = () => {
           </Route>
           <Route path={Paths.landing} component={LandingView} />
           <Route path={Paths.question} component={QuestionView} />
-          <ProtectedRoute
-            allowed={isAdmin}
-            path={Paths.admin}
-            redirectNotAllowed={Paths.landing}
-            component={AdminView}
-          />
+          <Route path={Paths.admin} component={AdminView} />
 
-          {/* <Route>
+          <Route>
             <NotFoundView />
-          </Route> */}
+          </Route>
         </Switch>
       </Router>
     </>
