@@ -1,4 +1,4 @@
-import { checkIfRoomExists, getAdmin } from "./users";
+import { addAnswer, checkIfRoomExists, getAdmin } from "./users";
 
 import express from 'express';
 import http from 'http';
@@ -12,7 +12,7 @@ const io = new Server(server, {cors: {
   origin: '*',
   } 
 });
-const {addUser, getUser, deleteUser, getUsers } = require('./users');
+const {addUser, getUser, deleteUser, getUsers, getUsersWithoutAdmin } = require('./users');
 
 const generateRoomCode = () => {
     var roomCode = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
@@ -25,9 +25,11 @@ io.on('connection', (socket) => {
     fn(roomCode);  
   })
 
-  socket.on("createRoom", ({roomCode}:any) => {
+  socket.on("createRoom", ({roomCode}:any, callback:any) => {
     addUser(socket.id, null, roomCode, true);
     socket.join(roomCode);
+    const usersWithoutAdmin = getUsersWithoutAdmin(roomCode);
+    callback(usersWithoutAdmin);
   })
 
   socket.on("validateRoomCode", ({roomCode}:any, callback:any) => {
@@ -40,11 +42,13 @@ io.on('connection', (socket) => {
 
   socket.on("joinRoom", ({userName, roomCode}:any) => {
       addUser(socket.id, userName, roomCode, false);
+      const answer = getUser(socket.id).answer;
       socket.join(roomCode);
-      io.to(getAdmin(roomCode)).emit('renderUser', {userName, answer:""});
+      io.to(getAdmin(roomCode)).emit('renderUser', {userName, answer});
   })
 
   socket.on("sendAnswer", ({userName, answer, roomCode }:any) => {
+    addAnswer(socket.id, answer);
     io.to(getAdmin(roomCode)).emit('renderUser', {userName, answer});
   })
 

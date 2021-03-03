@@ -7,10 +7,7 @@ import QuestionView from "./views/QuestionView/questionView";
 import NotFoundView from "./views/NotFoundView/notFoundView";
 import AdminView from "./views/AdminView/adminView";
 
-
 export const App: React.FC = () => {
-  const isAdmin = true;
-
   return (
     <>
       <Router>

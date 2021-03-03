@@ -2,6 +2,7 @@ let usersArray:any = [];
 
 export const addUser = (userID:any, userName:any, roomCode:any, isAdmin:any) => {
     const key = roomCode;
+    const answer = "";
     let userNameExists = false;
     const user:any = {};
     usersArray.forEach((element:any) => {
@@ -20,7 +21,8 @@ export const addUser = (userID:any, userName:any, roomCode:any, isAdmin:any) => 
     user[key] = {
         userID,
         userName,
-        isAdmin
+        answer,
+        isAdmin,
     }
     usersArray.push(user);
     return user;
@@ -37,6 +39,17 @@ export const checkIfRoomExists = (roomCode:any) => {
     return result;
 };
 
+export const addAnswer = (userID: any, answer: string) => {
+    usersArray.forEach((element:any) => {
+        const objectRoomCodes = Object.keys(element);
+        objectRoomCodes.forEach(roomCode => {
+            if (element[roomCode].userID === userID) {
+                element[roomCode].answer === answer;
+            }
+        })
+    })
+};
+
 export const getUser = (userID:any) => {
     let user = {};
     usersArray.forEach((element:any) => {
@@ -47,6 +60,7 @@ export const getUser = (userID:any) => {
                     userID: element[roomCode].userID,
                     userName: element[roomCode].userName,
                     isAdmin: element[roomCode].isAdmin,
+                    answer: element[roomCode].answer,
                     roomCode,
                 }
 
@@ -72,6 +86,21 @@ export const deleteUser = (userID:any) => {
 export const getUsers = () => {
     return usersArray;
 };
+
+export const getUsersWithoutAdmin = (roomCode: any) => {
+    let list:any = [];
+    usersArray.forEach((element:any) => {
+        const objectRoomCode = Object.keys(element);
+        if (objectRoomCode === roomCode) {
+            const innerObject = element[roomCode];
+            if (innerObject.isAdmin === false) {
+                list.push(innerObject);
+            }
+        }
+    });
+    return list;
+
+}
 
 export const getAdmin = (roomCode:any) => {
     let admin = "";
