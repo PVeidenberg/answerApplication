@@ -25,15 +25,18 @@ main {
 
 header,
 footer {
-  flex: none;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
 }
 
 .time-left {
   display: flex;
   width: 100%;
   align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
+  justify-content: space-evenly;
 }
 
 .white {

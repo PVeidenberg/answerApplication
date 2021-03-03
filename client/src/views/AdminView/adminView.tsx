@@ -29,7 +29,7 @@ export default function QuestionView(props: any) {
   const [answerTime, setAnswerTime] = useState(15);
   const [roomCode, _] = useState(props.location.state.roomCode);
   const [users, setUsers] = useState<any>([]);
-  const [questionTimeLeft, setQuestionTimeLeft] = useState(15);
+  const [questionTimeLeft, setQuestionTimeLeft] = useState<number>(15);
   const [startTimer, setStartTimer] = useState(false);
   const ary = [
     { userName: "Pärt", answer: "Tallinn" },
@@ -54,7 +54,27 @@ export default function QuestionView(props: any) {
         roomCode,
       },
       (data: any) => {
-        console.log(data);
+        if (data.length === 0) {
+          return;
+        } else {
+          data.forEach((element:any) => {
+            const latestUser = {
+              userName: element.userName,
+              answer: element.answer,
+            };
+
+            setUsers((users: any) => {
+              users.forEach((user: any, index: number) => {
+                if (user.userName === data.userName) {
+                  users.splice(index, 1);
+                }
+              });
+              return [...users, latestUser];
+            });
+          });
+         
+
+        }   
       }
     );
   }, []);
@@ -85,30 +105,30 @@ export default function QuestionView(props: any) {
 
   useEffect(() => {
     if (startTimer) {
-      const timer = setInterval(() => {
-        if (questionTimeLeft > 0) {
-          setQuestionTimeLeft(questionTimeLeft - 1);
-        } else {
-          clearTimeout(timer);
-        }
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
+        const timer = setInterval(() => {
+          if (questionTimeLeft > 0) {
+            setQuestionTimeLeft(questionTimeLeft - 1);
+          } else {
+            clearTimeout(timer);
+          }
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
   }, [startTimer, questionTimeLeft]);
 
   const handleNextQuestion = () => {
-    setQuestionTimeLeft(answerTime);
-    setStartTimer(true);
+    setQuestionTimeLeft(() => answerTime);  
+    setStartTimer(() => true);
     socket.emit("nextQuestionServer", {
       roomCode,
       answerTime,
     });
     setUsers([]);
   };
-
+  
   const handleAnswerTimeChange = (event: any) => {
     const time = event.target.value;
-    setAnswerTime(time);
+    setAnswerTime(() => time);
   };
 
   return (
@@ -152,7 +172,7 @@ export default function QuestionView(props: any) {
             <option value={120}>2:00</option>
             <option value={135}>2:15</option>
             <option value={150}>2:30</option>
-            <option value={300}>No time</option>
+            <option value={"No time"}>No time</option>
           </CustomNativeSelect>
         </div>
         <h3 className="white">{`Time left to answer: ${questionTimeLeft}`}</h3>

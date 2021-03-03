@@ -44,7 +44,7 @@ export const addAnswer = (userID: any, answer: string) => {
         const objectRoomCodes = Object.keys(element);
         objectRoomCodes.forEach(roomCode => {
             if (element[roomCode].userID === userID) {
-                element[roomCode].answer === answer;
+                element[roomCode].answer = answer;
             }
         })
     })
@@ -75,7 +75,7 @@ export const deleteUser = (userID:any) => {
     usersArray.forEach((element:any) => {
         const objectRoomCodes = Object.keys(element);
         objectRoomCodes.forEach(roomCode => {
-            if (element[roomCode].userID == userID) {
+            if (element[roomCode].userID === userID) {
                 let index = usersArray.indexOf(element);
                 usersArray.splice(index , 1);
             }
@@ -88,15 +88,17 @@ export const getUsers = () => {
 };
 
 export const getUsersWithoutAdmin = (roomCode: any) => {
-    let list:any = [];
+   let list:any = [];
     usersArray.forEach((element:any) => {
-        const objectRoomCode = Object.keys(element);
-        if (objectRoomCode === roomCode) {
-            const innerObject = element[roomCode];
-            if (innerObject.isAdmin === false) {
-                list.push(innerObject);
+        const objectRoomCodes = Object.keys(element);
+        objectRoomCodes.forEach(roomCoe => {
+            if (roomCoe === roomCode) {
+                const innerObject = element[roomCode];
+                if (innerObject.isAdmin === false) {
+                    list.push(innerObject);
+                }
             }
-        }
+        })
     });
     return list;
 

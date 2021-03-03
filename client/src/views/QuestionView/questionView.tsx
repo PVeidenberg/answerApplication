@@ -38,7 +38,7 @@ const MyButton = styled(Button)({
 export default function QuestionView(props: any) {
   const [answer, setAnswer] = useState("");
   const [questionTimeLeft, setQuestionTimeLeft] = useState<number | string>(
-    "plenty"
+    "No time"
   );
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(true);
   const [userName, setUserName] = useState(props.location.state.userName);
@@ -55,8 +55,8 @@ export default function QuestionView(props: any) {
   useEffect(() => {
     socket.on("nextQuestion", (data: any) => {
       setIsSendButtonDisabled(false);
-      if (parseInt(data.answerTime) === 300) {
-        setQuestionTimeLeft("plenty");
+      if (data.answerTime === "No time") {
+        setQuestionTimeLeft("No time");
         setStartTimer(false);
       } else {
         setQuestionTimeLeft(parseInt(data.answerTime));
