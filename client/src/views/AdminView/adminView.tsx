@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import NativeSelect from "@material-ui/core/NativeSelect";
-import Drawer from "../../components/Drawer/drawer";
-import { Row } from "../../components/Row/row";
+
+// import Drawer from "../../components/Drawer/Drawer";
+import { Row } from "../../components/Row/Row";
 import { socket } from "../../services/socket";
 import { styled, withStyles } from "@material-ui/core/styles";
 import "./admin-view.css";
@@ -31,21 +32,6 @@ export default function QuestionView(props: any) {
   const [users, setUsers] = useState<any>([]);
   const [questionTimeLeft, setQuestionTimeLeft] = useState<number>(15);
   const [startTimer, setStartTimer] = useState(false);
-  const ary = [
-    { userName: "Pärt", answer: "Tallinn" },
-    { userName: "Evelina", answer: "Tallinn" },
-    { userName: "Pät", answer: "Tallinn" },
-    { userName: "Prt", answer: "Tallinn" },
-    { userName: "rt", answer: "Tallinn" },
-
-    { userName: "Evela", answer: "Tallinn" },
-    { userName: "Eelina", answer: "Tallinn" },
-    { userName: "Eveina", answer: "Tallinn" },
-    { userName: "Elina", answer: "Tallinn" },
-    { userName: "Svenm", answer: "Tallinn" },
-    { userName: "Sven", answer: "Tallinn" },
-    { userName: "Anne", answer: "Tallinn" },
-  ];
 
   useEffect(() => {
     socket.emit(
