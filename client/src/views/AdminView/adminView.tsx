@@ -5,26 +5,8 @@ import NativeSelect from "@material-ui/core/NativeSelect";
 // import Drawer from "../../components/Drawer/Drawer";
 import { Row } from "../../components/Row/Row";
 import { socket } from "../../services/socket";
-import { styled, withStyles } from "@material-ui/core/styles";
-import "./admin-view.css";
+import "./admin-view.scss";
 
-const CustomNativeSelect = withStyles({
-  root: {
-    color: "white",
-    borderBottom: "2px solid white",
-    "&.MuiNativeSelect-nativeInput": {
-      color: "#282c34",
-    },
-  },
-  icon: {
-    fill: "white",
-  },
-})(NativeSelect);
-
-const MyButton = styled(Button)({
-  marginTop: "10px",
-  width: "225px",
-});
 
 export default function QuestionView(props: any) {
   const [answerTime, setAnswerTime] = useState(15);
@@ -134,17 +116,17 @@ export default function QuestionView(props: any) {
         })}
       </main>
       <footer>
-        <MyButton
+        <Button
           className="next-question"
           onClick={() => handleNextQuestion()}
           variant="contained"
           color="primary"
         >
           Next question
-        </MyButton>
+        </Button>
         <div className="time-left">
           <h3 className="white">{"Answer time: "}</h3>
-          <CustomNativeSelect
+          <NativeSelect
             value={answerTime}
             onChange={(e) => handleAnswerTimeChange(e)}
           >
@@ -159,7 +141,7 @@ export default function QuestionView(props: any) {
             <option value={135}>2:15</option>
             <option value={150}>2:30</option>
             <option value={"No time"}>No time</option>
-          </CustomNativeSelect>
+          </NativeSelect>
         </div>
         <h3 className="white">{`Time left to answer: ${questionTimeLeft}`}</h3>
       </footer>

@@ -1,5 +1,5 @@
 import React from "react";
-import './row.css';
+import './row.scss';
 
 export interface RowProps {
   userName: string;

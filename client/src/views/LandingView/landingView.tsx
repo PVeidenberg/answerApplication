@@ -1,42 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { socket } from "../../services/socket";
-import { withStyles, styled } from "@material-ui/core/styles";
-import "./landing-view.css";
 import Paths from "../../Paths";
 import { useHistory } from "react-router-dom";
 
-const CustomTextField = withStyles({
-  root: {
-    marginTop: "40px",
-    marginBottom: "40px",
-    "& label": {
-      color: "white",
-    },
-    "& label.Mui-focused": {
-      color: "white",
-    },
-    "& .MuiInput-underline:before": {
-      borderBottomColor: "white",
-    },
-    "& .MuiInput-underline:after": {
-      borderBottomColor: "white",
-    },
-    "& .MuiInput-underline": {
-      borderBottomColor: "white",
-      width: "225px",
-    },
-    "& .MuiInput-root": {
-      color: "white",
-    },
-  },
-})(TextField);
-
-const MyButton = styled(Button)({
-  marginTop: "30px",
-  width: "225px",
-});
+import "./landing-view.scss";
 
 export default function App(props: any) {
   const history = useHistory();
@@ -97,15 +66,15 @@ export default function App(props: any) {
 
   return (
     <div className="App">
-      <MyButton
+      <Button
         onClick={() => handleCreateRoom()}
         variant="contained"
         color="primary"
       >
         Create room
-      </MyButton>
+      </Button>
       <div id="Slider" className="slideup">
-        <CustomTextField
+        <TextField
           id="userNameField"
           error={hasUserNameError}
           label={hasUserNameError ? "Error" : "Nickname"}
@@ -115,7 +84,7 @@ export default function App(props: any) {
           onChange={handleUsernameChange}
           value={userName}
         />
-        <CustomTextField
+        <TextField
           id="roomCodeField"
           error={hasroomCodeError}
           label={hasroomCodeError ? "Error" : "Room code"}
@@ -124,13 +93,13 @@ export default function App(props: any) {
           value={roomCode}
         />
       </div>
-      <MyButton
+      <Button
         onClick={() => handleJoinRoom()}
         variant="contained"
         color="primary"
       >
         Join room
-      </MyButton>
+      </Button>
     </div>
   );
 }

@@ -1,11 +1,13 @@
 import React from "react";
 import { Route, Switch, Redirect } from "react-router";
-import Paths from "./Paths";
 import { BrowserRouter as Router } from "react-router-dom";
+import Paths from "./Paths";
 import LandingView from "./views/LandingView/LandingView";
 import QuestionView from "./views/QuestionView/QuestionView";
 import NotFoundView from "./views/NotFoundView/NotFoundView";
 import AdminView from "./views/AdminView/AdminView";
+
+import "./app.scss"
 
 export const App: React.FC = () => {
   return (

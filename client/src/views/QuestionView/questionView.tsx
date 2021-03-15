@@ -1,39 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { socket } from "../../services/socket";
-import { withStyles, styled } from "@material-ui/core/styles";
-import "./question-view.css";
 
-const CustomTextField = withStyles({
-  root: {
-    marginTop: "5px",
-    width: "26ch",
-
-    color: "white",
-    "& label": {
-      color: "white",
-    },
-    "& label.Mui-focused": {
-      color: "white",
-    },
-    "& .MuiOutlinedInput-root": {
-      color: "white",
-      height: "10ch",
-      "& fieldset": {
-        borderColor: "white",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "white",
-      },
-    },
-  },
-})(TextField);
-
-const MyButton = styled(Button)({
-  marginTop: "5px",
-  width: "225px",
-});
+import "./question-view.scss";
 
 export default function QuestionView(props: any) {
   const [answer, setAnswer] = useState("");
@@ -93,7 +63,7 @@ export default function QuestionView(props: any) {
   return (
     <div className="App">
       <h2 className="question-heading white">Write your answer in the box</h2>
-      <CustomTextField
+      <TextField
         id="outlined-multiline-static"
         label={"Your answer"}
         onChange={(e) => handleAnswerChange(e)}
@@ -105,14 +75,14 @@ export default function QuestionView(props: any) {
       <h4 className="white">{`Time left : ${
         questionTimeLeft !== null ? questionTimeLeft : "No time"
       }`}</h4>
-      <MyButton
+      <Button
         onClick={() => handleAnswerSending()}
         disabled={isSendButtonDisabled}
         variant="contained"
         color="primary"
       >
         Send your answer
-      </MyButton>
+      </Button>
     </div>
   );
 }
