@@ -7,10 +7,10 @@ import { Server } from 'socket.io';
 
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const io = new Server(server, {cors: {
   origin: '*',
-  } 
+  }
 });
 const {addUser, getUser, deleteUser, getUsers, getUsersWithoutAdmin } = require('./users');
 
@@ -22,7 +22,7 @@ const generateRoomCode = () => {
 io.on('connection', (socket) => {
   socket.on("askRoomCode", function(_:any , fn:any) {
     const roomCode = generateRoomCode();
-    fn(roomCode);  
+    fn(roomCode);
   })
 
   socket.on("createRoom", ({roomCode}:any, callback:any) => {
