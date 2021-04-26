@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Eazy Answers",
+  "main": "app.js",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently -n CLIENT,SERVER \"yarn workspace client start\" \"yarn workspace server start\"",
+    "tsc": "tsc"
+  },
+  "author": "Pärt",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^6.0.2",
+    "prettier": "^2.2.1"
+  }
+}
