@@ -9,10 +9,7 @@ export default function TemporaryDrawer(props: any) {
   });
 
   const toggleDrawer = (anchor: any, open: any) => (event: any) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
+    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
 
@@ -20,20 +17,14 @@ export default function TemporaryDrawer(props: any) {
   };
 
   const list = (anchor: any) => (
-    <div
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-    >
+    <div role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
       <List>
-        {["Question1", "Question2", "Question3", "Question4"].map(
-          (text, index) => (
-            <div key={index}>
-              {text}
-              <Divider />
-            </div>
-          )
-        )}
+        {["Question1", "Question2", "Question3", "Question4"].map((text, index) => (
+          <div key={index}>
+            {text}
+            <Divider />
+          </div>
+        ))}
       </List>
     </div>
   );
@@ -42,11 +33,7 @@ export default function TemporaryDrawer(props: any) {
     <div>
       <React.Fragment key={"left"}>
         {/* <MyButton variant="contained" color="primary" onClick={toggleDrawer('left', true)}>Previous questions</MyButton> */}
-        <Drawer
-          anchor={"left"}
-          open={state["left"]}
-          onClose={toggleDrawer("left", false)}
-        >
+        <Drawer anchor={"left"} open={state["left"]} onClose={toggleDrawer("left", false)}>
           {list("left")}
         </Drawer>
       </React.Fragment>

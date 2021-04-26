@@ -7,11 +7,61 @@ import QuestionView from "./views/QuestionView/QuestionView";
 import NotFoundView from "./views/NotFoundView/NotFoundView";
 import AdminView from "./views/AdminView/AdminView";
 
-import "./app.scss"
+import "./app.scss";
+
+import {
+  Box,
+  CardHeader,
+  Container,
+  createMuiTheme,
+  CssBaseline,
+  Grid,
+  makeStyles,
+  Paper,
+  TextField,
+  ThemeProvider,
+  Typography,
+} from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+const darkTheme = createMuiTheme({
+  palette: {
+    type: "dark",
+    background: {
+      default: "#282c34",
+    },
+    primary: {
+      main: "#369c57",
+    },
+  },
+});
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(2),
+    margin: "auto",
+    maxWidth: 500,
+  },
+  image: {
+    width: 128,
+    height: 128,
+  },
+  img: {
+    margin: "auto",
+    display: "block",
+    maxWidth: "100%",
+    maxHeight: "100%",
+  },
+}));
 
 export const App: React.FC = () => {
+  const classes = useStyles();
+
   return (
-    <>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
       <Router>
         <Switch>
           <Route exact path="/">
@@ -26,6 +76,6 @@ export const App: React.FC = () => {
           </Route>
         </Switch>
       </Router>
-    </>
+    </ThemeProvider>
   );
 };

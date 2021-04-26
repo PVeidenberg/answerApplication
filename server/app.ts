@@ -1,22 +1,21 @@
 import { addAnswer, checkIfRoomExists, getAdmin } from "./users";
+import * as model from "./model";
 
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import * as util from "util";
 
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5001;
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
+export const io = new Server(server, {
+  cors: { origin: "*" },
 });
 const { addUser, getUser, deleteUser, getUsers, getUsersWithoutAdmin } = require("./users");
 
 const generateRoomCode = () => {
-  var roomCode = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
-  return roomCode;
+  return (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
 };
 
 io.on("connection", socket => {
@@ -26,34 +25,43 @@ io.on("connection", socket => {
   });
 
   socket.on("createRoom", ({ roomCode }: any, callback: any) => {
-    addUser(socket.id, null, roomCode, true);
-    socket.join(roomCode);
-    const usersWithoutAdmin = getUsersWithoutAdmin(roomCode);
-    callback(usersWithoutAdmin);
+    const room = model.createRoom(roomCode, socket);
+
+    if (room) {
+      socket.join(roomCode);
+      callback(
+        room.users.map(user => ({ name: user.name })),
+        room.activeQuestion?.answers,
+      );
+    } else {
+      callback(null);
+    }
+    model.log();
   });
 
   socket.on("validateRoomCode", ({ roomCode }: any, callback: any) => {
-    if (checkIfRoomExists(roomCode)) {
-      callback(true);
-    } else {
-      callback(false);
-    }
+    callback(model.checkIfRoomExists(roomCode));
   });
 
   socket.on("joinRoom", ({ userName, roomCode }: any) => {
-    addUser(socket.id, userName, roomCode, false);
-    const answer = getUser(socket.id).answer;
+    model.joinRoom(roomCode, userName, socket);
     socket.join(roomCode);
-    io.to(getAdmin(roomCode)).emit("renderUser", { userName, answer });
+    model.log();
   });
 
   socket.on("sendAnswer", ({ userName, answer, roomCode }: any) => {
-    addAnswer(socket.id, answer);
-    io.to(getAdmin(roomCode)).emit("renderUser", { userName, answer });
+    model.saveAnswer(roomCode, userName, answer);
+    console.log(model.rooms);
+  });
+
+  socket.on("toggleAnswerCorrectnessServer", ({ userName, roomCode }: any) => {
+    model.toggleAnswerCorrectnessServer(roomCode, userName);
+    console.log(model.rooms);
   });
 
   socket.on("nextQuestionServer", ({ roomCode, answerTime }: any) => {
-    socket.broadcast.to(roomCode).emit("nextQuestion", { answerTime });
+    model.nextQuestion(roomCode, answerTime);
+    console.log(model.rooms);
   });
 
   socket.on("endQuestionServer", ({ roomCode }: any) => {
@@ -61,9 +69,8 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
-    const user = getUser(socket.id);
-    deleteUser(socket.id);
-    io.to(getAdmin(user.roomCode)).emit("deleteUser", { userName: user.userName });
+    model.disconnect(socket);
+    model.log();
   });
 });
 

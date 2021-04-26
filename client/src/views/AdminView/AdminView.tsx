@@ -1,152 +1,134 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
-import NativeSelect from "@material-ui/core/NativeSelect";
 
-// import Drawer from "../../components/Drawer/Drawer";
 import { Row } from "../../components/Row/Row";
 import { socket } from "../../services/socket";
 import "./admin-view.scss";
+import Timer from "../../components/Timer/Timer";
+import { AppBar, Box, FormControl, InputLabel, MenuItem, Select, Toolbar, Typography } from "@material-ui/core";
+import List from "@material-ui/core/List";
+import { Redirect } from "react-router";
+import Paths from "../../Paths";
 
+export interface User {
+  name: string;
+}
+
+export interface Answer {
+  userName: string;
+  answer: string;
+  date: string;
+  isCorrect?: boolean;
+}
 
 export default function QuestionView(props: any) {
-  const [answerTime, setAnswerTime] = useState(15);
-  const [roomCode, _] = useState(props.location.state.roomCode);
-  const [users, setUsers] = useState<any>([]);
-  const [questionTimeLeft, setQuestionTimeLeft] = useState<number>(15);
-  const [startTimer, setStartTimer] = useState(false);
+  const [answerTime, setAnswerTime] = useState(60);
+  const [users, setUsers] = useState<User[]>([]);
+  const [answers, setAnswers] = useState<Answer[]>([]);
 
   useEffect(() => {
+    if (!props.location.state) {
+      return;
+    }
     socket.emit(
       "createRoom",
       {
-        roomCode,
+        roomCode: props.location.state.roomCode,
       },
-      (data: any) => {
-        if (data.length === 0) {
+      (users: User[] | null, answers?: Answer[]) => {
+        if (!users || users.length === 0) {
           return;
         } else {
-          data.forEach((element:any) => {
-            const latestUser = {
-              userName: element.userName,
-              answer: element.answer,
-            };
+          setUsers(users);
+        }
 
-            setUsers((users: any) => {
-              users.forEach((user: any, index: number) => {
-                if (user.userName === data.userName) {
-                  users.splice(index, 1);
-                }
-              });
-              return [...users, latestUser];
-            });
-          });
-         
-
-        }   
-      }
+        if (answers) {
+          setAnswers(answers);
+        }
+      },
     );
-  }, []);
+    socket.on("users", (users: User[]) => {
+      setUsers(users);
+    });
 
-  useEffect(() => {
-    socket.on("renderUser", (data: any) => {
-      const latestUser = {
-        userName: data.userName,
-        answer: data.answer,
-      };
-
-      setUsers((users: any) => {
-        users.forEach((user: any, index: number) => {
-          if (user.userName === data.userName) {
-            users.splice(index, 1);
-          }
-        });
-        return [...users, latestUser];
+    socket.on("answer", (answer: Answer) => {
+      setAnswers(answers => {
+        let index = answers.findIndex(answerObj => answerObj.userName === answer.userName);
+        if (index === -1) {
+          return [...answers, answer];
+        } else {
+          return [...answers.slice(0, index), ...answers.slice(index + 1), answer];
+        }
       });
     });
-
-    socket.on("deleteUser", (data: any) => {
-      setUsers((users: any) =>
-        users.filter((user: any) => user.userName !== data.userName)
-      );
-    });
   }, []);
 
-  useEffect(() => {
-    if (startTimer) {
-        const timer = setInterval(() => {
-          if (questionTimeLeft > 0) {
-            setQuestionTimeLeft(questionTimeLeft - 1);
-          } else {
-            clearTimeout(timer);
-          }
-        }, 1000);
-        return () => clearTimeout(timer);
-      }
-  }, [startTimer, questionTimeLeft]);
+  if (!props.location.state) {
+    return <Redirect to={Paths.landing} />;
+  }
 
-  const handleNextQuestion = () => {
-    setQuestionTimeLeft(() => answerTime);  
-    setStartTimer(() => true);
+  const roomCode = props.location.state.roomCode;
+
+  const handleNextQuestion = e => {
+    e.preventDefault();
+
     socket.emit("nextQuestionServer", {
       roomCode,
       answerTime,
     });
-    setUsers([]);
+    setAnswers([]);
   };
-  
+
   const handleAnswerTimeChange = (event: any) => {
     const time = event.target.value;
-    setAnswerTime(() => time);
+    setAnswerTime(time);
   };
 
   return (
-    <div className="wrapper">
-      <header>
-        <h2 className="white">{`ROOM CODE: ${roomCode}`}</h2>
-      </header>
-      <main>
-        {users.map((userObject: any, index: number) => {
-          return (
-            <Row
-              key={index}
-              userName={userObject.userName}
-              answer={userObject.answer}
-            />
-          );
-        })}
-      </main>
-      <footer>
-        <Button
-          className="next-question"
-          onClick={() => handleNextQuestion()}
-          variant="contained"
-          color="primary"
-        >
+    <form onSubmit={handleNextQuestion} className="admin-view">
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" className="code">
+            Code: {roomCode}
+          </Typography>
+          <Timer isAdmin={true} />
+        </Toolbar>
+      </AppBar>
+
+      <Box my={1}>
+        <List dense={true}>
+          {answers.length > 0
+            ? answers.map(answer => <Row key={answer.userName} answer={answer} roomCode={roomCode} />)
+            : users.map(user => <Row key={user.name} user={user} roomCode={roomCode} />)}
+        </List>
+      </Box>
+      <Box className="footer">
+        <Button type="submit" className="next-question" variant="contained" color="primary" fullWidth>
           Next question
         </Button>
-        <div className="time-left">
-          <h3 className="white">{"Answer time: "}</h3>
-          <NativeSelect
+        <br />
+        <FormControl variant="filled" fullWidth>
+          <InputLabel id="demo-simple-select-filled-label">Answer time</InputLabel>
+          <Select
+            labelId="demo-simple-select-filled-label"
+            id="demo-simple-select-filled"
+            fullWidth
+            onChange={handleAnswerTimeChange}
             value={answerTime}
-            onChange={(e) => handleAnswerTimeChange(e)}
           >
-            <option value={15}>15</option>
-            <option value={30}>30</option>
-            <option value={45}>45</option>
-            <option value={60}>1:00</option>
-            <option value={75}>1:15</option>
-            <option value={90}>1:30</option>
-            <option value={105}>1:45</option>
-            <option value={120}>2:00</option>
-            <option value={135}>2:15</option>
-            <option value={150}>2:30</option>
-            <option value={"No time"}>No time</option>
-          </NativeSelect>
-        </div>
-        <h3 className="white">{`Time left to answer: ${questionTimeLeft}`}</h3>
-      </footer>
-
-      {/* <Drawer /> */}
-    </div>
+            <MenuItem value={15}>15</MenuItem>
+            <MenuItem value={30}>30</MenuItem>
+            <MenuItem value={45}>45</MenuItem>
+            <MenuItem value={60}>1:00</MenuItem>
+            <MenuItem value={75}>1:15</MenuItem>
+            <MenuItem value={90}>1:30</MenuItem>
+            <MenuItem value={105}>1:45</MenuItem>
+            <MenuItem value={120}>2:00</MenuItem>
+            <MenuItem value={135}>2:15</MenuItem>
+            <MenuItem value={150}>2:30</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+    </form>
   );
 }
