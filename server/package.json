@@ -18,6 +18,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "production": "ts-node app.ts",
     "start": "nodemon app.ts",
     "tsc": "tsc"
   },

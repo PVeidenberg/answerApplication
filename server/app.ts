@@ -5,8 +5,12 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import * as util from "util";
+import path from "path";
 
 const app = express();
+
+const DIST_FOLDER = path.join(__dirname, "../client/build");
+
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5001;
 export const io = new Server(server, {
@@ -72,6 +76,12 @@ io.on("connection", socket => {
     model.disconnect(socket);
     model.log();
   });
+});
+
+app.use(express.static(DIST_FOLDER));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(DIST_FOLDER, "index.html"));
 });
 
 server.listen(PORT, () => {

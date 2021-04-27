@@ -77,7 +77,7 @@ export default function QuestionView(props: any) {
             </Button>
           </Box>
           <Box style={{ textAlign: "center" }}>
-            <Zoom in={isCorrect} style={{ transitionDelay: isCorrect ? "500ms" : "0ms" }}>
+            <Zoom in={isCorrect}>
               <DoneOutline color="primary" style={{ fontSize: "50vw" }} />
             </Zoom>
           </Box>
