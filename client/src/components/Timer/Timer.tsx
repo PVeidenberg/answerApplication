@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { socket } from "../../services/socket";
 import useCooldown from "../../hooks/useCooldown";
 import "./timer.scss";
 import { LinearProgress, withStyles } from "@material-ui/core";
+import useSocketEvent from "../../hooks/useSocketEvent";
 
 const BorderLinearProgress = withStyles(theme => ({
   root: {
@@ -40,22 +40,20 @@ export default function Timer({
   const [startData, setStartDate] = React.useState<Date>();
   const secondsLeft = useCooldown(endDate);
 
-  useEffect(() => {
-    socket.on("nextQuestion", ({ endDate }: { endDate: string }) => {
-      const date = endDate ? new Date(endDate) : undefined;
+  useSocketEvent("nextQuestion", ({ endDate }) => {
+    const date = endDate ? new Date(endDate) : undefined;
 
-      const now = new Date();
+    const now = new Date();
 
-      if (date && now > date) {
-        setEndDate(undefined);
-        toggleIsActive?.(false);
-      } else {
-        setEndDate(date);
-        setStartDate(new Date());
-        toggleIsActive?.(!!date && date > new Date());
-      }
-    });
-  }, []);
+    if (date && now > date) {
+      setEndDate(undefined);
+      toggleIsActive?.(false);
+    } else {
+      setEndDate(date);
+      setStartDate(new Date());
+      toggleIsActive?.(!!date && date > new Date());
+    }
+  });
 
   useEffect(() => {
     toggleIsActive?.(!!endDate && secondsLeft > 0);

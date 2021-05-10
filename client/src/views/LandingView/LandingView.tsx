@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { socket } from "../../services/socket";
 import Paths from "../../Paths";
 import { useHistory } from "react-router-dom";
-import { Box, Container, Grid, ThemeProvider } from "@material-ui/core";
-
-// import "./landing-view.scss";
+import { Box, Container, Grid } from "@material-ui/core";
+import useEmit from "../../hooks/useEmit";
 
 export default function App(props: any) {
   const history = useHistory();
@@ -14,6 +12,7 @@ export default function App(props: any) {
   const [hasroomCodeError, setHasRoomCodeError] = useState(false);
   const [userName, setUserName] = useState("");
   const [roomCode, setRoomCode] = useState("");
+  const emit = useEmit();
 
   const handleJoinRoom = e => {
     e.preventDefault();
@@ -23,7 +22,7 @@ export default function App(props: any) {
       setHasRoomCodeError(false);
     } else {
       setHasUserNameError(() => false);
-      socket.emit("validateRoomCode", { roomCode }, isValid => {
+      emit("validateRoomCode", { roomCode }, isValid => {
         if (isValid) {
           setHasRoomCodeError(false);
           history.push({
@@ -41,7 +40,7 @@ export default function App(props: any) {
   };
 
   const handleCreateRoom = async () => {
-    socket.emit("askRoomCode", null, roomCode => {
+    emit("askRoomCode", null, roomCode => {
       setRoomCode(roomCode);
       history.push({
         pathname: Paths.admin,

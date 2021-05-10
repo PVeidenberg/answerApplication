@@ -1,7 +1,7 @@
 /// <reference types="react-scripts" />
 
 import { Socket as OriginalSocket } from "socket.io-client";
-import { ClientEvents, ServerEvents } from "../../shared/events";
+import { ClientEvents, ServerEvents } from "../../shared/Events";
 
 export interface Socket extends OriginalSocket {
   emit<Event extends keyof ClientEvents>(

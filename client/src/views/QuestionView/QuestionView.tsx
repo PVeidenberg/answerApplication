@@ -2,34 +2,31 @@ import React, { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { DoneOutline } from "@material-ui/icons";
-import { socket } from "../../services/socket";
 
 import "./question-view.scss";
 import Timer from "../../components/Timer/Timer";
 import { AppBar, Box, Container, Paper, Toolbar, Typography, Zoom } from "@material-ui/core";
 import { Redirect } from "react-router";
 import Paths from "../../Paths";
+import useSocketEvent from "../../hooks/useSocketEvent";
+import useEmit from "../../hooks/useEmit";
 
 export default function QuestionView(props: any) {
   const [answer, setAnswer] = useState("");
   const [isSendButtonActive, setIsSendButtonActive] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
 
+  useSocketEvent("setAnswerCorrectness", ({ isCorrect }) => setIsCorrect(isCorrect));
+  useSocketEvent("nextQuestion", () => setIsCorrect(false));
+  const emit = useEmit();
+
   useEffect(() => {
     if (props.location.state) {
-      socket.emit("joinRoom", {
+      emit("joinRoom", {
         userName: props.location.state.userName,
         roomCode: props.location.state.roomCode,
       });
     }
-
-    socket.on("setAnswerCorrectness", ({ isCorrect }: { isCorrect: boolean }) => {
-      setIsCorrect(isCorrect);
-    });
-
-    socket.on("nextQuestion", () => {
-      setIsCorrect(false);
-    });
   }, []);
 
   if (!props.location.state) {
@@ -42,7 +39,7 @@ export default function QuestionView(props: any) {
 
   const handleAnswerSending = e => {
     e.preventDefault();
-    socket.emit("sendAnswer", {
+    emit("sendAnswer", {
       userName: props.location.state.userName,
       answer,
       roomCode: props.location.state.roomCode,

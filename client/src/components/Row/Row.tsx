@@ -1,8 +1,8 @@
 import React from "react";
 import "./row.scss";
 import { Checkbox, ListItem, ListItemSecondaryAction, ListItemText } from "@material-ui/core";
-import { socket } from "../../services/socket";
 import { Answer, User } from "../../../../shared/Types";
+import useEmit from "../../hooks/useEmit";
 
 export interface RowProps {
   user?: User;
@@ -11,12 +11,13 @@ export interface RowProps {
 }
 
 export const Row: React.FC<RowProps> = ({ user, answer, roomCode }) => {
+  const emit = useEmit();
   const name = answer?.userName || user?.name;
   const value = answer?.answer;
 
   function handleAnswerToggle() {
     if (name) {
-      socket.emit("toggleAnswerCorrectnessServer", { userName: name, roomCode });
+      emit("toggleAnswerCorrectnessServer", { userName: name, roomCode });
     }
   }
 

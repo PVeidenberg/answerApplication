@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 
 import { Row } from "../../components/Row/Row";
-import { socket } from "../../services/socket";
 import "./admin-view.scss";
 import Timer from "../../components/Timer/Timer";
 import { AppBar, Box, FormControl, InputLabel, MenuItem, Select, Toolbar, Typography } from "@material-ui/core";
@@ -10,17 +9,36 @@ import List from "@material-ui/core/List";
 import { Redirect } from "react-router";
 import Paths from "../../Paths";
 import { Answer, User } from "../../../../shared/Types";
+import useSocketEvent from "../../hooks/useSocketEvent";
+import useEmit from "../../hooks/useEmit";
 
 export default function QuestionView(props: any) {
   const [answerTime, setAnswerTime] = useState(60);
   const [users, setUsers] = useState<User[]>([]);
   const [answers, setAnswers] = useState<Answer[]>([]);
 
+  useSocketEvent("users", users => {
+    setUsers(users);
+  });
+
+  useSocketEvent("answer", answer => {
+    setAnswers(answers => {
+      let index = answers.findIndex(answerObj => answerObj.userName === answer.userName);
+      if (index === -1) {
+        return [...answers, answer];
+      } else {
+        return [...answers.slice(0, index), ...answers.slice(index + 1), answer];
+      }
+    });
+  });
+
+  const emit = useEmit();
+
   useEffect(() => {
     if (!props.location.state) {
       return;
     }
-    socket.emit(
+    emit(
       "createRoom",
       {
         roomCode: props.location.state.roomCode,
@@ -37,20 +55,6 @@ export default function QuestionView(props: any) {
         }
       },
     );
-    socket.on("users", (users: User[]) => {
-      setUsers(users);
-    });
-
-    socket.on("answer", (answer: Answer) => {
-      setAnswers(answers => {
-        let index = answers.findIndex(answerObj => answerObj.userName === answer.userName);
-        if (index === -1) {
-          return [...answers, answer];
-        } else {
-          return [...answers.slice(0, index), ...answers.slice(index + 1), answer];
-        }
-      });
-    });
   }, []);
 
   if (!props.location.state) {
@@ -62,7 +66,7 @@ export default function QuestionView(props: any) {
   const handleNextQuestion = e => {
     e.preventDefault();
 
-    socket.emit("nextQuestionServer", {
+    emit("nextQuestionServer", {
       roomCode,
       answerTime,
     });
