@@ -1,8 +1,8 @@
 import React from "react";
 import "./row.scss";
-import { Answer, User } from "../../views/AdminView/AdminView";
 import { Checkbox, ListItem, ListItemSecondaryAction, ListItemText } from "@material-ui/core";
 import { socket } from "../../services/socket";
+import { Answer, User } from "../../../../shared/Types";
 
 export interface RowProps {
   user?: User;
@@ -15,7 +15,9 @@ export const Row: React.FC<RowProps> = ({ user, answer, roomCode }) => {
   const value = answer?.answer;
 
   function handleAnswerToggle() {
-    socket.emit("toggleAnswerCorrectnessServer", { userName: name, roomCode });
+    if (name) {
+      socket.emit("toggleAnswerCorrectnessServer", { userName: name, roomCode });
+    }
   }
 
   return (

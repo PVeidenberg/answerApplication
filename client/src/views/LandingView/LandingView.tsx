@@ -23,7 +23,7 @@ export default function App(props: any) {
       setHasRoomCodeError(false);
     } else {
       setHasUserNameError(() => false);
-      socket.emit("validateRoomCode", { roomCode }, (isValid: boolean) => {
+      socket.emit("validateRoomCode", { roomCode }, isValid => {
         if (isValid) {
           setHasRoomCodeError(false);
           history.push({
@@ -41,7 +41,7 @@ export default function App(props: any) {
   };
 
   const handleCreateRoom = async () => {
-    socket.emit("askRoomCode", null, (roomCode: string) => {
+    socket.emit("askRoomCode", null, roomCode => {
       setRoomCode(roomCode);
       history.push({
         pathname: Paths.admin,

@@ -9,17 +9,7 @@ import { AppBar, Box, FormControl, InputLabel, MenuItem, Select, Toolbar, Typogr
 import List from "@material-ui/core/List";
 import { Redirect } from "react-router";
 import Paths from "../../Paths";
-
-export interface User {
-  name: string;
-}
-
-export interface Answer {
-  userName: string;
-  answer: string;
-  date: string;
-  isCorrect?: boolean;
-}
+import { Answer, User } from "../../../../shared/Types";
 
 export default function QuestionView(props: any) {
   const [answerTime, setAnswerTime] = useState(60);
@@ -35,7 +25,7 @@ export default function QuestionView(props: any) {
       {
         roomCode: props.location.state.roomCode,
       },
-      (users: User[] | null, answers?: Answer[]) => {
+      ({ users, answers }) => {
         if (!users || users.length === 0) {
           return;
         } else {

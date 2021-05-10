@@ -1,6 +1,5 @@
-import { Socket } from "socket.io";
-import * as util from "util";
 import { io } from "./app";
+import { Socket } from "./SocketIoServer";
 
 interface User {
   id: string;
@@ -69,7 +68,7 @@ export function joinRoom(code: string, name: string, socket: Socket): void {
   updateAdminAboutUsers(room);
 
   if (room.activeQuestion) {
-    socket.emit("nextQuestion", { endDate: room.activeQuestion.endDate });
+    socket.emit("nextQuestion", { endDate: room.activeQuestion.endDate.toISOString() });
   }
 }
 
@@ -131,7 +130,7 @@ export function saveAnswer(roomCode: string, userName: string, answerValue: stri
   }
 
   if (room.admin) {
-    room.admin.emit("answer", answer);
+    room.admin.emit("answer", { ...answer, date: answer.date.toISOString() });
   }
 }
 
