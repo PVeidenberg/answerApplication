@@ -1,7 +1,9 @@
 import { Server, ServerOptions } from "socket.io";
 import { Socket as SocketIo } from "socket.io/dist/socket";
-import { ClientEvents, ServerEvents } from "../shared/events";
+import { ClientEvents, ServerEvents } from "../../shared/Events";
 import * as http from "http";
+import { IncomingMessage } from "http";
+import { Session } from "express-session";
 
 export interface Socket extends SocketIo {
   on(event: "disconnect", cb: (reason: string) => void): this;
@@ -16,6 +18,11 @@ export interface Socket extends SocketIo {
     cb?: (data: ServerEvents[Event]["callback"]) => void,
   ): true;
   emit<Event extends keyof ServerEvents>(event: ServerEvents[Event]["args"] extends never ? Event : never): true;
+
+  readonly request: IncomingMessage & {
+    session: Session;
+    sessionID: string;
+  };
 }
 
 export interface SocketIoServerType extends Server {

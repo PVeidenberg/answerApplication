@@ -1,13 +1,14 @@
 import * as model from "./model";
 
 import express from "express";
+import session from "express-session";
 import http from "http";
 import path from "path";
 import { SocketIoServer } from "./SocketIoServer";
 
 const app = express();
 
-const DIST_FOLDER = path.join(__dirname, "../client/build");
+const DIST_FOLDER = path.join(__dirname, "../../client/build");
 
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5001;
@@ -15,11 +16,26 @@ export const io = new SocketIoServer(server, {
   cors: { origin: "*" },
 });
 
+const sessionMiddleware = session({
+  secret: "keyboard cat",
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 24 * 3600 },
+});
+
+app.use(sessionMiddleware);
+
+io.use(function (socket, next) {
+  sessionMiddleware(socket.request as any, {} as any, next as any);
+});
+
 const generateRoomCode = () => {
   return (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
 };
 
 io.on("connection", socket => {
+  const session = socket.request.session;
+
   socket.on("askRoomCode", function (_args, cb) {
     const roomCode = generateRoomCode();
     cb(roomCode);
@@ -29,6 +45,9 @@ io.on("connection", socket => {
     const room = model.createRoom(roomCode, socket);
 
     if (room) {
+      session.roomCode = roomCode;
+      session.save();
+
       socket.join(roomCode);
       callback({
         users: room.users.map(user => ({ name: user.name })),
@@ -76,6 +95,13 @@ io.on("connection", socket => {
 });
 
 app.use(express.static(DIST_FOLDER));
+
+if (process.env.NODE_ENV === "development") {
+  // endpoint for development to create session and set session cookie
+  app.get("/dev", (req, res) => {
+    res.send("ok");
+  });
+}
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(DIST_FOLDER, "index.html"));
