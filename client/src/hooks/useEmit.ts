@@ -1,13 +1,15 @@
 import { useEffect, useRef } from "react";
+import { EventParams } from "socket.io-client/build/typed-events";
 
-import { ClientEvents } from "../../../shared/Events";
+import { ClientToServerEvents } from "../../../shared/Events";
 import { socket } from "../services/socket";
 
-export function useEmit(): <Event extends keyof ClientEvents>(
+type ReturnType = <Event extends keyof ClientToServerEvents>(
   event: Event,
-  args: ClientEvents[Event]["args"],
-  cb?: (data: ClientEvents[Event]["callback"]) => void,
-) => void {
+  ...args: EventParams<ClientToServerEvents, Event>
+) => void;
+
+export function useEmit(): ReturnType {
   const isMounted = useRef(false);
 
   // Remember the latest callback.
@@ -19,7 +21,7 @@ export function useEmit(): <Event extends keyof ClientEvents>(
     };
   }, []);
 
-  return (event, args, cb) => {
+  return (((event, args, cb) => {
     socket.emit(
       event,
       args,
@@ -31,5 +33,5 @@ export function useEmit(): <Event extends keyof ClientEvents>(
           }
         : undefined,
     );
-  };
+  }) as unknown) as ReturnType;
 }

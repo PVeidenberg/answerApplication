@@ -5,8 +5,8 @@ import express, { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import sessionFileStore from "session-file-store";
 
-import { SocketIoServer } from "./SocketIoServer";
 import * as model from "./model";
+import { createSocketServer } from "./services/socketService";
 
 const app = express();
 
@@ -14,9 +14,8 @@ const DIST_FOLDER = path.join(__dirname, "../../client/build");
 
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5001;
-export const io = new SocketIoServer(server, {
-  cors: { origin: "*" },
-});
+
+export const io = createSocketServer(server);
 
 const FileStore = sessionFileStore(session);
 

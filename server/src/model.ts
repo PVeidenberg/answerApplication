@@ -1,5 +1,5 @@
-import { Socket } from "./SocketIoServer";
 import { io } from "./app";
+import { Socket } from "./services/socketService";
 
 interface User {
   id: string;
@@ -100,7 +100,7 @@ export function nextQuestion(roomCode: string, answerTime: number): void {
     answers: [],
   };
 
-  io.to(roomCode).emit("nextQuestion", { endDate });
+  io.to(roomCode).emit("nextQuestion", { endDate: endDate.toISOString() });
 }
 
 export function checkIfRoomExists(roomCode: string): boolean {

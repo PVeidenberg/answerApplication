@@ -1,25 +1,20 @@
 import { Answer, User } from "./Types";
 
-interface Event<Args, Callback = never> {
-  args: Args;
-  callback: Callback;
+export interface ClientToServerEvents {
+  askRoomCode: (args: null, cb: (roomCode: string) => void) => void;
+  createRoom: (args: { roomCode: string }, cb: (args: { users?: User[]; answers?: Answer[] }) => void) => void;
+  joinRoom: (args: { userName: string; roomCode: string }) => void;
+  sendAnswer: (args: { userName: string; answer: string; roomCode: string }) => void;
+  toggleAnswerCorrectnessServer: (args: { userName: string; roomCode: string }) => void;
+  nextQuestionServer: (args: { roomCode: string; answerTime: number }) => void;
+  endQuestionServer: (args: { roomCode: string }) => void;
+  validateRoomCode: (args: { roomCode: string }, cb: (isValid: boolean) => void) => void;
 }
 
-export interface ClientEvents {
-  askRoomCode: Event<null, string>;
-  createRoom: Event<{ roomCode: string }, { users?: User[]; answers?: Answer[] }>;
-  joinRoom: Event<{ userName: string; roomCode: string }>;
-  sendAnswer: Event<{ userName: string; answer: string; roomCode: string }>;
-  toggleAnswerCorrectnessServer: Event<{ userName: string; roomCode: string }>;
-  nextQuestionServer: Event<{ roomCode: string; answerTime: number }>;
-  endQuestionServer: Event<{ roomCode: string }>;
-  validateRoomCode: Event<{ roomCode: string }, boolean>;
-}
-
-export interface ServerEvents {
-  nextQuestion: Event<{ endDate: string }>;
-  answer: Event<Answer>;
-  setAnswerCorrectness: Event<{ isCorrect: boolean }>;
-  users: Event<User[]>;
-  endQuestion: Event<never>;
+export interface ServerToClientEvents {
+  nextQuestion: (args: { endDate: string }) => void;
+  answer: (answer: Answer) => void;
+  setAnswerCorrectness: (args: { isCorrect: boolean }) => void;
+  users: (users: User[]) => void;
+  endQuestion: () => void;
 }

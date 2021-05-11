@@ -13,19 +13,7 @@ module.exports = {
       },
     ],
     "import/no-default-export": "error",
-    // curly: ["error", "all"],
-    //
-    // // consider to turn on in the future
-    // "@typescript-eslint/explicit-function-return-type": "off",
-    // "@typescript-eslint/no-explicit-any": "off",
-    //
-    // used for code splitting
-    //
-    // // allow explicit unused variables
-    // "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-    //
-    // // allow let for destructuring
-    // "prefer-const": ["error", { destructuring: "all" }],
+    "@typescript-eslint/no-explicit-any": "off",
   },
   overrides: [
     {

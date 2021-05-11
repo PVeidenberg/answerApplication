@@ -1,9 +1,10 @@
-import { io } from "socket.io-client";
+import { io, Socket as SocketIoSocket } from "socket.io-client";
 
-import { Socket } from "../react-app-env";
+import { ClientToServerEvents, ServerToClientEvents } from "../../../shared/Events";
 
-export const socket = io({
+export type Socket = SocketIoSocket<ServerToClientEvents, ClientToServerEvents>;
+export const socket: Socket = io({
   transports: ["websocket", "polling"],
   withCredentials: true,
   autoConnect: false,
-}) as Socket;
+});

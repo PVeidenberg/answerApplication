@@ -1,17 +1,17 @@
 import { useEffect, useRef } from "react";
 
-import { ServerEvents } from "../../../shared/Events";
+import { ServerToClientEvents } from "../../../shared/Events";
 import { socket } from "../services/socket";
 
 const noop = () => {
   // no-op
 };
 
-export function useSocketEvent<Event extends keyof ServerEvents>(
+export function useSocketEvent<Event extends keyof ServerToClientEvents>(
   event: Event,
-  cb: (args: ServerEvents[Event]["args"]) => void,
+  cb: ServerToClientEvents[Event],
 ): void {
-  const savedCallback = useRef<(arg: ServerEvents[Event]["args"]) => void>(noop);
+  const savedCallback = useRef<any>(noop);
 
   // Remember the latest callback.
   useEffect(() => {
@@ -19,7 +19,7 @@ export function useSocketEvent<Event extends keyof ServerEvents>(
   });
 
   useEffect(() => {
-    const listener = args => savedCallback.current(args);
+    const listener: any = args => savedCallback.current(args);
     socket.on(event, listener);
 
     return () => {
