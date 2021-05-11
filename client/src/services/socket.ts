@@ -6,5 +6,3 @@ export const socket = io({
   withCredentials: true,
   autoConnect: false,
 }) as Socket;
-
-socket.on("connect", () => {});

@@ -3,3 +3,5 @@ export enum Paths {
   question = "/question",
   admin = "/admin",
 }
+
+export default 5;

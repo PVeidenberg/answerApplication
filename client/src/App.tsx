@@ -7,40 +7,13 @@ import { QuestionView } from "./views/QuestionView/QuestionView";
 import { NotFoundView } from "./views/NotFoundView/NotFoundView";
 import { AdminView } from "./views/AdminView/AdminView";
 
-import "./app.scss";
-
-import { Box, CircularProgress, makeStyles } from "@material-ui/core";
 import { api } from "./services/api";
-import { Socket } from "./components/Socket/Socket";
 import { Header } from "./components/Header/Header";
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: "flex",
-    minHeight: "100vh",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  paper: {
-    padding: theme.spacing(2),
-    margin: "auto",
-    maxWidth: 500,
-  },
-  image: {
-    width: 128,
-    height: 128,
-  },
-  img: {
-    margin: "auto",
-    display: "block",
-    maxWidth: "100%",
-    maxHeight: "100%",
-  },
-}));
+import { useSocketConnection } from "./hooks/useSocketConnection";
 
 export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const classes = useStyles();
+  useSocketConnection(!isLoading);
 
   useEffect(() => {
     api.getSession().then(data => {
@@ -49,17 +22,8 @@ export const App: React.FC = () => {
     });
   }, []);
 
-  if (isLoading) {
-    return (
-      <Box className={classes.root} m="auto">
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
     <>
-      <Socket />
       <Header />
       <Router>
         <Switch>
