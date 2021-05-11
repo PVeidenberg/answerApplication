@@ -1,5 +1,5 @@
-import { io } from "./app";
 import { Socket } from "./SocketIoServer";
+import { io } from "./app";
 
 interface User {
   id: string;
@@ -86,7 +86,7 @@ function getUserRoom(roomCode: string, userName: string) {
   return isUserInRoom(room, userName) ? room : null;
 }
 
-export function nextQuestion(roomCode: string, answerTime: number) {
+export function nextQuestion(roomCode: string, answerTime: number): void {
   const room = rooms[roomCode];
 
   if (!room) {
@@ -107,7 +107,7 @@ export function checkIfRoomExists(roomCode: string): boolean {
   return !!rooms[roomCode];
 }
 
-export function saveAnswer(roomCode: string, userName: string, answerValue: string) {
+export function saveAnswer(roomCode: string, userName: string, answerValue: string): void {
   const room = getUserRoom(roomCode, userName);
 
   const now = new Date();
@@ -134,14 +134,14 @@ export function saveAnswer(roomCode: string, userName: string, answerValue: stri
   }
 }
 
-export function toggleAnswerCorrectnessServer(roomCode: string, userName: string) {
+export function toggleAnswerCorrectnessServer(roomCode: string, userName: string): void {
   const room = getUserRoom(roomCode, userName);
 
   if (!room || !room.activeQuestion) {
     return;
   }
 
-  let answer = room.activeQuestion.answers.find(answerObj => answerObj.userName === userName);
+  const answer = room.activeQuestion.answers.find(answerObj => answerObj.userName === userName);
 
   if (answer) {
     answer.isCorrect = !answer.isCorrect;
@@ -167,7 +167,7 @@ function getRoom(socket: Socket): [Room | null, boolean] {
   return [null, false];
 }
 
-export function disconnect(socket: Socket) {
+export function disconnect(socket: Socket): void {
   const [room, isAdmin] = getRoom(socket);
 
   if (room) {
@@ -192,13 +192,4 @@ function updateAdminAboutUsers(room: Room) {
       room.users.map(user => ({ name: user.name })),
     );
   }
-}
-
-export function log() {
-  const data = Object.values(rooms).map(room => ({
-    isAdmin: !!room.admin,
-    users: room.users.map(user => user.name),
-    question: room.activeQuestion,
-  }));
-  // console.log(util.inspect(data, false, null, true));
 }

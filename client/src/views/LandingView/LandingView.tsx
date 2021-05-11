@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Paths } from "../../Paths";
-import { useHistory } from "react-router-dom";
 import { Box, Button, Container, Grid, TextField } from "@material-ui/core";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+
+import { Paths } from "../../Paths";
 import { useEmit } from "../../hooks/useEmit";
 
 export const LandingView: React.FC = () => {
@@ -49,11 +50,11 @@ export const LandingView: React.FC = () => {
     });
   };
 
-  const handleUsernameChange = (event: any) => {
+  const handleUsernameChange = event => {
     setUserName(event.target.value);
   };
 
-  const handleRoomCodeChange = (event: any) => {
+  const handleRoomCodeChange = event => {
     setRoomCode(event.target.value);
   };
 

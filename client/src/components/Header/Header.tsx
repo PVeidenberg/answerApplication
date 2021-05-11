@@ -1,8 +1,10 @@
-import React from "react";
 import { AppBar, createStyles, makeStyles, Toolbar, Typography } from "@material-ui/core";
-import { useRecoilValue } from "recoil";
-import { connectedState } from "../../atoms/connectedState";
 import { WifiTethering, PortableWifiOff } from "@material-ui/icons";
+import React from "react";
+import { useRecoilValue } from "recoil";
+
+import { connectedState } from "../../atoms/connectedState";
+
 
 const useStyles = makeStyles(theme =>
   createStyles({

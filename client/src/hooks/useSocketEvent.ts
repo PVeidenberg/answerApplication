@@ -1,6 +1,7 @@
+import { useEffect, useRef } from "react";
+
 import { ServerEvents } from "../../../shared/Events";
 import { socket } from "../services/socket";
-import { useEffect, useRef } from "react";
 
 const noop = () => {
   // no-op
@@ -9,8 +10,8 @@ const noop = () => {
 export function useSocketEvent<Event extends keyof ServerEvents>(
   event: Event,
   cb: (args: ServerEvents[Event]["args"]) => void,
-) {
-  const savedCallback = useRef<(arg: any) => void>(noop);
+): void {
+  const savedCallback = useRef<(arg: ServerEvents[Event]["args"]) => void>(noop);
 
   // Remember the latest callback.
   useEffect(() => {
@@ -24,5 +25,5 @@ export function useSocketEvent<Event extends keyof ServerEvents>(
     return () => {
       socket.off(event, listener);
     };
-  }, []);
+  }, [event]);
 }

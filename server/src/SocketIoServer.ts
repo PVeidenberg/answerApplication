@@ -1,9 +1,9 @@
-import { Server, ServerOptions } from "socket.io";
-import { Socket as SocketIo } from "socket.io/dist/socket";
-import { ClientEvents, ServerEvents } from "../../shared/Events";
-import * as http from "http";
-import { IncomingMessage } from "http";
+import { IncomingMessage, Server as HttpServer } from "http";
+
 import { Session } from "express-session";
+import { Server, ServerOptions, Socket as SocketIo } from "socket.io";
+
+import { ClientEvents, ServerEvents } from "../../shared/Events";
 
 export interface Socket extends SocketIo {
   on(event: "disconnect", cb: (reason: string) => void): this;
@@ -30,6 +30,6 @@ export interface SocketIoServerType extends Server {
 }
 
 export const SocketIoServer: new (
-  rv?: http.Server | number,
+  rv?: HttpServer | number,
   opts?: Partial<ServerOptions>,
 ) => SocketIoServerType = Server;

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, Redirect } from "react-router";
 import { BrowserRouter as Router } from "react-router-dom";
-import { Paths } from "./Paths";
-import { LandingView } from "./views/LandingView/LandingView";
-import { QuestionView } from "./views/QuestionView/QuestionView";
-import { NotFoundView } from "./views/NotFoundView/NotFoundView";
-import { AdminView } from "./views/AdminView/AdminView";
 
-import { api } from "./services/api";
+import { Paths } from "./Paths";
 import { Header } from "./components/Header/Header";
 import { useSocketConnection } from "./hooks/useSocketConnection";
+import { api } from "./services/api";
+import { AdminView } from "./views/AdminView/AdminView";
+import { LandingView } from "./views/LandingView/LandingView";
+import { NotFoundView } from "./views/NotFoundView/NotFoundView";
+import { QuestionView } from "./views/QuestionView/QuestionView";
+
 
 export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);

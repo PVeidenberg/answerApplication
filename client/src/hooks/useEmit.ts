@@ -1,8 +1,13 @@
-import { ClientEvents, ServerEvents } from "../../../shared/Events";
-import { socket } from "../services/socket";
 import { useEffect, useRef } from "react";
 
-export function useEmit() {
+import { ClientEvents } from "../../../shared/Events";
+import { socket } from "../services/socket";
+
+export function useEmit<Event extends keyof ClientEvents>(): (
+  event: Event,
+  args: ClientEvents[Event]["args"],
+  cb?: (data: ClientEvents[Event]["callback"]) => void,
+) => void {
   const isMounted = useRef(false);
 
   // Remember the latest callback.
@@ -14,11 +19,7 @@ export function useEmit() {
     };
   }, []);
 
-  return <Event extends keyof ClientEvents>(
-    event: Event,
-    args: ClientEvents[Event]["args"],
-    cb?: (data: ClientEvents[Event]["callback"]) => void,
-  ) => {
+  return (event, args, cb) => {
     socket.emit(
       event,
       args,

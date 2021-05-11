@@ -1,7 +1,8 @@
+import { LinearProgress, withStyles } from "@material-ui/core";
 import React, { useEffect } from "react";
+
 import { useCooldown } from "../../hooks/useCooldown";
 import "./timer.scss";
-import { LinearProgress, withStyles } from "@material-ui/core";
 import { useSocketEvent } from "../../hooks/useSocketEvent";
 
 const BorderLinearProgress = withStyles(theme => ({
@@ -56,7 +57,7 @@ export const Timer: React.FC<Props> = ({ toggleIsActive, isAdmin }) => {
 
   useEffect(() => {
     toggleIsActive?.(!!endDate && secondsLeft > 0);
-  }, [secondsLeft, endDate]);
+  }, [secondsLeft, endDate, toggleIsActive]);
 
   const text = endDate ? `Time left to answer: ${secondsLeft || "Time is up"}` : "Waiting for next question";
 

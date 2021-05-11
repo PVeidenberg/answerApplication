@@ -1,10 +1,11 @@
-import * as model from "./model";
-
-import express from "express";
-import session from "express-session";
 import http from "http";
 import path from "path";
+
+import express, { Request, Response, NextFunction } from "express";
+import session from "express-session";
+
 import { SocketIoServer } from "./SocketIoServer";
+import * as model from "./model";
 
 const app = express();
 
@@ -26,7 +27,7 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 io.use(function (socket, next) {
-  sessionMiddleware(socket.request as any, {} as any, next as any);
+  sessionMiddleware(socket.request as Request, {} as Response, next as NextFunction);
 });
 
 app.get("/api/session", (req, res) => {
@@ -62,7 +63,6 @@ io.on("connection", socket => {
     } else {
       callback({});
     }
-    model.log();
   });
 
   socket.on("validateRoomCode", ({ roomCode }, callback) => {
@@ -72,7 +72,6 @@ io.on("connection", socket => {
   socket.on("joinRoom", ({ userName, roomCode }) => {
     model.joinRoom(roomCode, userName, socket);
     socket.join(roomCode);
-    model.log();
   });
 
   socket.on("sendAnswer", ({ userName, answer, roomCode }) => {
@@ -94,9 +93,8 @@ io.on("connection", socket => {
     socket.broadcast.to(roomCode).emit("endQuestion");
   });
 
-  socket.on("disconnect", reason => {
+  socket.on("disconnect", () => {
     model.disconnect(socket);
-    model.log();
   });
 });
 

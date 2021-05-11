@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Location } from "history";
+import { AppBar, Box, Button, Container, TextField, Toolbar, Typography, Zoom } from "@material-ui/core";
 import { DoneOutline } from "@material-ui/icons";
+import { Location } from "history";
+import React, { useEffect, useState } from "react";
+import { Redirect } from "react-router";
 
 import "./question-view.scss";
-import { Timer } from "../../components/Timer/Timer";
-import { AppBar, Box, Button, Container, TextField, Toolbar, Typography, Zoom } from "@material-ui/core";
-import { Redirect } from "react-router";
+
 import { Paths } from "../../Paths";
-import { useSocketEvent } from "../../hooks/useSocketEvent";
+import { Timer } from "../../components/Timer/Timer";
 import { useEmit } from "../../hooks/useEmit";
+import { useSocketEvent } from "../../hooks/useSocketEvent";
 
 interface Props {
   location: Location<{ userName: string; roomCode: string }>;
@@ -30,13 +31,14 @@ export const QuestionView: React.FC<Props> = props => {
         roomCode: props.location.state.roomCode,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!props.location.state) {
     return <Redirect to={Paths.landing} />;
   }
 
-  const handleAnswerChange = (event: any) => {
+  const handleAnswerChange = event => {
     setAnswer(() => event.target.value);
   };
 

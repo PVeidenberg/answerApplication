@@ -1,8 +1,3 @@
-import React, { useEffect, useState } from "react";
-
-import { Row } from "../../components/Row/Row";
-import "./admin-view.scss";
-import { Timer } from "../../components/Timer/Timer";
 import {
   AppBar,
   Box,
@@ -15,13 +10,23 @@ import {
   Toolbar,
   Typography,
 } from "@material-ui/core";
+import { Location } from "history";
+import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router";
-import { Paths } from "../../Paths";
-import { Answer, User } from "../../../../shared/Types";
-import { useSocketEvent } from "../../hooks/useSocketEvent";
-import { useEmit } from "../../hooks/useEmit";
 
-export const AdminView: React.FC = (props: any) => {
+import "./admin-view.scss";
+import { Answer, User } from "../../../../shared/Types";
+import { Paths } from "../../Paths";
+import { Row } from "../../components/Row/Row";
+import { Timer } from "../../components/Timer/Timer";
+import { useEmit } from "../../hooks/useEmit";
+import { useSocketEvent } from "../../hooks/useSocketEvent";
+
+interface Props {
+  location: Location<{ roomCode: string }>;
+}
+
+export const AdminView: React.FC<Props> = props => {
   const [answerTime, setAnswerTime] = useState(60);
   const [users, setUsers] = useState<User[]>([]);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -32,7 +37,7 @@ export const AdminView: React.FC = (props: any) => {
 
   useSocketEvent("answer", answer => {
     setAnswers(answers => {
-      let index = answers.findIndex(answerObj => answerObj.userName === answer.userName);
+      const index = answers.findIndex(answerObj => answerObj.userName === answer.userName);
       if (index === -1) {
         return [...answers, answer];
       } else {
@@ -64,6 +69,7 @@ export const AdminView: React.FC = (props: any) => {
         }
       },
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!props.location.state) {
@@ -82,7 +88,7 @@ export const AdminView: React.FC = (props: any) => {
     setAnswers([]);
   };
 
-  const handleAnswerTimeChange = (event: any) => {
+  const handleAnswerTimeChange = event => {
     const time = event.target.value;
     setAnswerTime(time);
   };

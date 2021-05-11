@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import useInterval from "./useInterval";
+import { useInterval } from "./useInterval";
 
 function getSecondsLeft(date?: Date | null) {
   if (!date) {

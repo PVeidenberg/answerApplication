@@ -1,9 +1,10 @@
-import { useSetRecoilState } from "recoil";
-import { connectedState } from "../atoms/connectedState";
 import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+
+import { connectedState } from "../atoms/connectedState";
 import { socket } from "../services/socket";
 
-export function useSocketConnection(connect: boolean) {
+export function useSocketConnection(connect: boolean): void {
   const setConnected = useSetRecoilState(connectedState);
 
   useEffect(() => {
@@ -29,5 +30,5 @@ export function useSocketConnection(connect: boolean) {
       socket.off("disconnect", onDisconnect);
       socket.disconnect();
     };
-  }, [connect]);
+  }, [connect, setConnected]);
 }
