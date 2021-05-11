@@ -3,6 +3,7 @@ import path from "path";
 
 import express, { Request, Response, NextFunction } from "express";
 import session from "express-session";
+import sessionFileStore from "session-file-store";
 
 import { SocketIoServer } from "./SocketIoServer";
 import * as model from "./model";
@@ -17,7 +18,10 @@ export const io = new SocketIoServer(server, {
   cors: { origin: "*" },
 });
 
+const FileStore = sessionFileStore(session);
+
 const sessionMiddleware = session({
+  store: process.env.NODE_ENV === "development" ? new FileStore() : undefined,
   secret: "keyboard cat",
   resave: false,
   saveUninitialized: true,
@@ -99,13 +103,6 @@ io.on("connection", socket => {
 });
 
 app.use(express.static(DIST_FOLDER));
-
-if (process.env.NODE_ENV === "development") {
-  // endpoint for development to create session and set session cookie
-  app.get("/dev", (req, res) => {
-    res.send("ok");
-  });
-}
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(DIST_FOLDER, "index.html"));
