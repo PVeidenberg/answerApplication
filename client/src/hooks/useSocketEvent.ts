@@ -6,7 +6,7 @@ const noop = () => {
   // no-op
 };
 
-export default function useSocketEvent<Event extends keyof ServerEvents>(
+export function useSocketEvent<Event extends keyof ServerEvents>(
   event: Event,
   cb: (args: ServerEvents[Event]["args"]) => void,
 ) {

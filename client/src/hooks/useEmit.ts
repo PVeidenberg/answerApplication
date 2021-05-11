@@ -2,7 +2,7 @@ import { ClientEvents, ServerEvents } from "../../../shared/Events";
 import { socket } from "../services/socket";
 import { useEffect, useRef } from "react";
 
-export default function useEmit() {
+export function useEmit() {
   const isMounted = useRef(false);
 
   // Remember the latest callback.

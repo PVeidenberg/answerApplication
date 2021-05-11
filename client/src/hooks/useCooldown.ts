@@ -10,7 +10,7 @@ function getSecondsLeft(date?: Date | null) {
   return Math.max(Math.round((date.getTime() - Date.now()) / 1000), 0);
 }
 
-export default function useCooldown(cooldownUntilDate?: Date | null): number {
+export function useCooldown(cooldownUntilDate?: Date | null): number {
   const [secondsLeft, setSecondsLeft] = useState(getSecondsLeft(cooldownUntilDate));
 
   useEffect(() => {

@@ -2,20 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.scss";
 import { App } from "./App";
-import { connect } from "./services/socket";
-
-if (process.env.NODE_ENV === "development") {
-  // force sync request to server to create session cookie for socket.io
-  const oReq = new XMLHttpRequest();
-  oReq.open("GET", "/dev", false);
-  oReq.send();
-}
-
-connect();
+import { Theme } from "./components/Theme/Theme";
+import { RecoilRoot } from "recoil";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Theme>
+      <RecoilRoot>
+        <App />
+      </RecoilRoot>
+    </Theme>
   </React.StrictMode>,
   document.getElementById("app"),
 );

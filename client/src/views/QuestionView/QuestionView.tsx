@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
+import { Location } from "history";
 import { DoneOutline } from "@material-ui/icons";
 
 import "./question-view.scss";
-import Timer from "../../components/Timer/Timer";
-import { AppBar, Box, Container, Paper, Toolbar, Typography, Zoom } from "@material-ui/core";
+import { Timer } from "../../components/Timer/Timer";
+import { AppBar, Box, Button, Container, TextField, Toolbar, Typography, Zoom } from "@material-ui/core";
 import { Redirect } from "react-router";
-import Paths from "../../Paths";
-import useSocketEvent from "../../hooks/useSocketEvent";
-import useEmit from "../../hooks/useEmit";
+import { Paths } from "../../Paths";
+import { useSocketEvent } from "../../hooks/useSocketEvent";
+import { useEmit } from "../../hooks/useEmit";
 
-export default function QuestionView(props: any) {
+interface Props {
+  location: Location<{ userName: string; roomCode: string }>;
+}
+
+export const QuestionView: React.FC<Props> = props => {
   const [answer, setAnswer] = useState("");
   const [isSendButtonActive, setIsSendButtonActive] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -83,4 +86,4 @@ export default function QuestionView(props: any) {
       <Timer toggleIsActive={setIsSendButtonActive} />
     </div>
   );
-}
+};

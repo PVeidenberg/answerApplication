@@ -4,8 +4,7 @@ const target = "http://localhost:5001/";
 
 module.exports = function (app) {
   app.use(
-    ["/dev"],
-    createProxyMiddleware({
+    createProxyMiddleware("/api", {
       target,
     }),
   );

@@ -1,6 +1,5 @@
-enum Paths {
-	landing = '/landing',
-    question = '/question',
-    admin = '/admin',
+export enum Paths {
+  landing = "/landing",
+  question = "/question",
+  admin = "/admin",
 }
-export default Paths;

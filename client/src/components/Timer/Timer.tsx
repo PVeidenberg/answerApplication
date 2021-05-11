@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import useCooldown from "../../hooks/useCooldown";
+import { useCooldown } from "../../hooks/useCooldown";
 import "./timer.scss";
 import { LinearProgress, withStyles } from "@material-ui/core";
-import useSocketEvent from "../../hooks/useSocketEvent";
+import { useSocketEvent } from "../../hooks/useSocketEvent";
 
 const BorderLinearProgress = withStyles(theme => ({
   root: {
@@ -29,13 +29,12 @@ function getProgress(startDate?: Date, endDate?: Date) {
   return Math.min(Math.max((elapsed / total) * 100, 0), 100);
 }
 
-export default function Timer({
-  toggleIsActive,
-  isAdmin,
-}: {
+interface Props {
   isAdmin?: boolean;
   toggleIsActive?: (isActive: boolean) => void;
-}) {
+}
+
+export const Timer: React.FC<Props> = ({ toggleIsActive, isAdmin }) => {
   const [endDate, setEndDate] = React.useState<Date>();
   const [startData, setStartDate] = React.useState<Date>();
   const secondsLeft = useCooldown(endDate);
@@ -71,4 +70,4 @@ export default function Timer({
       <h3 className="white">{text}</h3>
     </div>
   );
-}
+};

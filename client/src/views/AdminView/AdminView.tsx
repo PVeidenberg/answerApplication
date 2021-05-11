@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
-import Button from "@material-ui/core/Button";
 
 import { Row } from "../../components/Row/Row";
 import "./admin-view.scss";
-import Timer from "../../components/Timer/Timer";
-import { AppBar, Box, FormControl, InputLabel, MenuItem, Select, Toolbar, Typography } from "@material-ui/core";
-import List from "@material-ui/core/List";
+import { Timer } from "../../components/Timer/Timer";
+import {
+  AppBar,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  List,
+  MenuItem,
+  Select,
+  Toolbar,
+  Typography,
+} from "@material-ui/core";
 import { Redirect } from "react-router";
-import Paths from "../../Paths";
+import { Paths } from "../../Paths";
 import { Answer, User } from "../../../../shared/Types";
-import useSocketEvent from "../../hooks/useSocketEvent";
-import useEmit from "../../hooks/useEmit";
+import { useSocketEvent } from "../../hooks/useSocketEvent";
+import { useEmit } from "../../hooks/useEmit";
 
-export default function QuestionView(props: any) {
+export const AdminView: React.FC = (props: any) => {
   const [answerTime, setAnswerTime] = useState(60);
   const [users, setUsers] = useState<User[]>([]);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -125,4 +134,4 @@ export default function QuestionView(props: any) {
       </Box>
     </form>
   );
-}
+};

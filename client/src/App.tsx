@@ -1,43 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Switch, Redirect } from "react-router";
 import { BrowserRouter as Router } from "react-router-dom";
-import Paths from "./Paths";
-import LandingView from "./views/LandingView/LandingView";
-import QuestionView from "./views/QuestionView/QuestionView";
-import NotFoundView from "./views/NotFoundView/NotFoundView";
-import AdminView from "./views/AdminView/AdminView";
+import { Paths } from "./Paths";
+import { LandingView } from "./views/LandingView/LandingView";
+import { QuestionView } from "./views/QuestionView/QuestionView";
+import { NotFoundView } from "./views/NotFoundView/NotFoundView";
+import { AdminView } from "./views/AdminView/AdminView";
 
 import "./app.scss";
 
-import {
-  Box,
-  CardHeader,
-  Container,
-  createMuiTheme,
-  CssBaseline,
-  Grid,
-  makeStyles,
-  Paper,
-  TextField,
-  ThemeProvider,
-  Typography,
-} from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-const darkTheme = createMuiTheme({
-  palette: {
-    type: "dark",
-    background: {
-      default: "#282c34",
-    },
-    primary: {
-      main: "#369c57",
-    },
-  },
-});
+import { Box, CircularProgress, makeStyles } from "@material-ui/core";
+import { api } from "./services/api";
+import { Socket } from "./components/Socket/Socket";
+import { Header } from "./components/Header/Header";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1,
+    display: "flex",
+    minHeight: "100vh",
+    alignItems: "center",
+    justifyContent: "center",
   },
   paper: {
     padding: theme.spacing(2),
@@ -57,11 +39,28 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const App: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const classes = useStyles();
 
+  useEffect(() => {
+    api.getSession().then(data => {
+      console.log(data);
+      setIsLoading(false);
+    });
+  }, []);
+
+  if (isLoading) {
+    return (
+      <Box className={classes.root} m="auto">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
+    <>
+      <Socket />
+      <Header />
       <Router>
         <Switch>
           <Route exact path="/">
@@ -76,6 +75,6 @@ export const App: React.FC = () => {
           </Route>
         </Switch>
       </Router>
-    </ThemeProvider>
+    </>
   );
 };

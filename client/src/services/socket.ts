@@ -1,11 +1,10 @@
 import { io } from "socket.io-client";
 import { Socket } from "../react-app-env";
 
-export let socket: Socket;
+export const socket = io({
+  transports: ["websocket", "polling"],
+  withCredentials: true,
+  autoConnect: false,
+}) as Socket;
 
-export function connect() {
-  socket = io({
-    transports: ["websocket", "polling"],
-    withCredentials: true,
-  }) as Socket;
-}
+socket.on("connect", () => {});

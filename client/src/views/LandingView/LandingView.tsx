@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Paths from "../../Paths";
+import { Paths } from "../../Paths";
 import { useHistory } from "react-router-dom";
-import { Box, Container, Grid } from "@material-ui/core";
-import useEmit from "../../hooks/useEmit";
+import { Box, Button, Container, Grid, TextField } from "@material-ui/core";
+import { useEmit } from "../../hooks/useEmit";
 
-export default function App(props: any) {
+export const LandingView: React.FC = () => {
   const history = useHistory();
   const [hasUserNameError, setHasUserNameError] = useState(false);
   const [hasroomCodeError, setHasRoomCodeError] = useState(false);
@@ -108,4 +106,4 @@ export default function App(props: any) {
       </Box>
     </Container>
   );
-}
+};
