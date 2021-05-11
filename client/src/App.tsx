@@ -11,14 +11,12 @@ import { LandingView } from "./views/LandingView/LandingView";
 import { NotFoundView } from "./views/NotFoundView/NotFoundView";
 import { QuestionView } from "./views/QuestionView/QuestionView";
 
-
 export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   useSocketConnection(!isLoading);
 
   useEffect(() => {
     api.getSession().then(data => {
-      console.log(data);
       setIsLoading(false);
     });
   }, []);

@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { ClientEvents } from "../../../shared/Events";
 import { socket } from "../services/socket";
 
-export function useEmit<Event extends keyof ClientEvents>(): (
+export function useEmit(): <Event extends keyof ClientEvents>(
   event: Event,
   args: ClientEvents[Event]["args"],
   cb?: (data: ClientEvents[Event]["callback"]) => void,
