@@ -21,17 +21,15 @@ export function useEmit(): ReturnType {
     };
   }, []);
 
-  return (((event, args, cb) => {
-    socket.emit(
-      event,
-      args,
-      cb
-        ? data => {
-            if (isMounted.current) {
-              cb(data);
-            }
-          }
-        : undefined,
-    );
+  return (((event, ...args) => {
+    if (typeof args[args.length - 1] === "function") {
+      const cb = args[args.length - 1];
+      args[args.length - 1] = (...args) => {
+        if (isMounted.current) {
+          cb(...args);
+        }
+      };
+    }
+    socket.emit(event, ...args);
   }) as unknown) as ReturnType;
 }

@@ -8,3 +8,12 @@ export interface Answer {
   date: string;
   isCorrect?: boolean;
 }
+
+export enum Role {
+  ADMIN = "ADMIN",
+  PLAYER = "PLAYER",
+}
+
+export interface SocketError {
+  message: string;
+}

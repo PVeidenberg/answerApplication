@@ -5,7 +5,6 @@ import { useRecoilValue } from "recoil";
 
 import { connectedState } from "../../atoms/connectedState";
 
-
 const useStyles = makeStyles(theme =>
   createStyles({
     title: {
@@ -14,7 +13,7 @@ const useStyles = makeStyles(theme =>
   }),
 );
 
-export const Header: React.FC = () => {
+export const Header: React.FC = ({ children }) => {
   const classes = useStyles();
   const isConnected = useRecoilValue(connectedState);
 
@@ -22,7 +21,7 @@ export const Header: React.FC = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" className={classes.title}>
-          Easy answers
+          {children || "Easy answers"}
         </Typography>
         {isConnected ? <WifiTethering /> : <PortableWifiOff />}
       </Toolbar>

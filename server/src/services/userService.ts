@@ -1,15 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
 
-interface User {
+export interface User {
   id: string;
   name?: string;
 }
 
 export const userService = {
-  createUser(name?: string): User {
+  createUserId(): string {
+    return uuidv4();
+  },
+  createUser(): User {
     return {
-      id: uuidv4(),
-      name,
+      id: this.createUserId(),
     };
   },
 };

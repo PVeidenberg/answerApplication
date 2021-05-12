@@ -1,5 +1,4 @@
-import { io } from "./app";
-import { Socket } from "./services/socketService";
+import { io, Socket } from "./services/socketService";
 
 interface User {
   id: string;
