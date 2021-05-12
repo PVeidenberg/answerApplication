@@ -1,36 +1,49 @@
-import * as model from "../model";
-import { Socket } from "../services/socketService";
 import { Role } from "../../../shared/Types";
-
-const generateRoomCode = () => {
-  return (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
-};
+import * as model from "../model";
+import { roomService } from "../services/roomService";
+import { Socket } from "../services/socketService";
 
 export function socketHandler(socket: Socket): void {
   const session = socket.request.session;
 
+  const user = session.user;
+
+  if (!user) {
+    socket.disconnect();
+
+    return;
+  }
+
   socket.on("createRoom", callback => {
-    const roomCode = generateRoomCode();
-    const room = model.createRoom(roomCode, socket);
+    const room = roomService.createRoom(user.id);
 
     if (room) {
-      session.roomCode = roomCode;
+      session.roomCode = room.code;
       session.role = Role.ADMIN;
       session.save();
 
-      socket.join(roomCode);
       callback(null, {
-        roomCode,
-        // users: room.users.map(user => ({ name: user.name })),
-        // answers: room.activeQuestion?.answers.map(answer => ({ ...answer, date: answer.date.toISOString() })),
+        roomCode: room.code,
       });
     } else {
       callback({ message: "Failed to create room" });
     }
   });
 
-  socket.on("validateRoomCode", ({ roomCode }, callback) => {
-    callback(model.checkIfRoomExists(roomCode));
+  socket.on("joinRoomAsAdmin", ({ roomCode }, cb) => {
+    try {
+      const room = roomService.joinRoomAsAdmin(roomCode, user.id, socket);
+
+      cb(null, { users: room.users });
+    } catch (err) {
+      cb({ message: err.message });
+
+      return;
+    }
+  });
+
+  socket.on("canJoinRoom", ({ roomCode, name }, callback) => {
+    callback(roomService.canJoinRoom(roomCode, name));
   });
 
   socket.on("joinRoom", ({ userName, roomCode }) => {

@@ -98,7 +98,7 @@ export const AdminView: React.FC<Props> = () => {
 
   return (
     <div>
-      <Header>Code: 9842</Header>
+      <Header>Code: {roomCode}</Header>
       <form onSubmit={handleNextQuestion} className="admin-view">
         <Box my={1}>
           <List dense={true}>

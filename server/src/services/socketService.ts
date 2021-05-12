@@ -7,6 +7,8 @@ import { socketHandler } from "../api/socketApi";
 type FixCallbacks<EventMap> = {
   [Event in keyof EventMap]: EventMap[Event] extends (cb: (err: SocketError | null, data: infer Data) => void) => void
     ? (cb: (err: null | SocketError, data?: Data) => void) => void
+    : EventMap[Event] extends (args: infer Args, cb: (err: SocketError | null, data: infer Data) => void) => void
+    ? (args: Args, cb: (err: null | SocketError, data?: Data) => void) => void
     : EventMap[Event];
 };
 

@@ -3,10 +3,11 @@ import { Close } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 import { Paths } from "../../Paths";
 import { Role, roomState } from "../../atoms/roomState";
+import { userState } from "../../atoms/userState";
 import { Header } from "../../components/Header/Header";
 import { useEmit } from "../../hooks/useEmit";
 
@@ -14,9 +15,12 @@ export const LandingView: React.FC = () => {
   const history = useHistory();
   const location = useLocation<{ error?: string } | undefined>();
   const setRoomState = useSetRecoilState(roomState);
-  const [hasUserNameError, setHasUserNameError] = useState(false);
-  const [hasroomCodeError, setHasRoomCodeError] = useState(false);
-  const [userName, setUserName] = useState("");
+  const [user, setUser] = useRecoilState(userState);
+  const [errors, setErrors] = useState<{ name: string | null; roomCode: string | null }>({
+    name: null,
+    roomCode: null,
+  });
+  const [userName, setUserName] = useState(user?.name || "");
   const [roomCode, setRoomCode] = useState("");
   const emit = useEmit();
 
@@ -25,26 +29,39 @@ export const LandingView: React.FC = () => {
   const handleJoinRoom = e => {
     e.preventDefault();
 
-    if (userName.trim().length < 3) {
-      setHasUserNameError(() => true);
-      setHasRoomCodeError(false);
-    } else {
-      setHasUserNameError(() => false);
-      emit("validateRoomCode", { roomCode }, isValid => {
-        if (isValid) {
-          setHasRoomCodeError(false);
-          history.push({
-            pathname: Paths.question,
-            state: {
-              userName,
-              roomCode,
-            },
-          });
-        } else {
-          setHasRoomCodeError(true);
-        }
+    const nameError = userName.trim().length < 4 ? "Nickname must be at least 4 characters" : null;
+    const roomCodeError = roomCode.trim().length < 4 ? "Room code must be at least 4 characters" : null;
+
+    if (nameError || roomCodeError) {
+      setErrors({
+        name: nameError,
+        roomCode: roomCodeError,
       });
+
+      return;
     }
+
+    setErrors({
+      name: null,
+      roomCode: null,
+    });
+
+    emit("canJoinRoom", { roomCode, name: userName }, errors => {
+      if (errors) {
+        setErrors(errors);
+      } else {
+        setUser({
+          name: userName,
+        });
+        setRoomState({
+          code: roomCode,
+          role: Role.PLAYER,
+          isConnected: false,
+          users: [],
+        });
+        history.push(Paths.question);
+      }
+    });
   };
 
   const handleCreateRoom = async () => {
@@ -113,9 +130,9 @@ export const LandingView: React.FC = () => {
                     <TextField
                       id="userNameField"
                       fullWidth
-                      error={hasUserNameError}
-                      label={hasUserNameError ? "Error" : "Nickname"}
-                      helperText={hasUserNameError ? "Nickname must be at least 4 characters" : ""}
+                      error={!!errors.name}
+                      label={"Nickname"}
+                      helperText={errors.name}
                       onChange={handleUsernameChange}
                       variant="outlined"
                       value={userName}
@@ -126,9 +143,9 @@ export const LandingView: React.FC = () => {
                     <TextField
                       id="roomCodeField"
                       fullWidth
-                      error={hasroomCodeError}
-                      label={hasroomCodeError ? "Error" : "Room code"}
-                      helperText={hasroomCodeError ? "Room does not exist" : ""}
+                      error={!!errors.roomCode}
+                      label={"Room code"}
+                      helperText={errors.roomCode}
                       onChange={handleRoomCodeChange}
                       variant="outlined"
                       value={roomCode}
